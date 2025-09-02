@@ -7,7 +7,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.cryptoexchange.tgcommon.constants.UpdateFilterType;
 import tgb.cryptoexchange.tgcommon.constants.UpdateType;
 import tgb.cryptoexchange.tgcommon.constants.UserState;
 import tgb.cryptoexchange.tgcommon.exception.HandlerTypeNotFoundException;
@@ -32,11 +31,9 @@ public class TelegramUpdateEventListener {
 
     private final Map<UserState, StateHandler> stateHandlerMap;
 
-    private final Map<UpdateFilterType, UpdateFilter> updateFilterMap;
+    private final List<UpdateFilter> updateFilters;
 
     private final EmptyHandler emptyHandler;
-
-    private final UpdateFilterService updateFilterService;
 
     private final AntiSpam antiSpam;
 
@@ -46,15 +43,10 @@ public class TelegramUpdateEventListener {
 
     public TelegramUpdateEventListener(RedisUserStateService redisUserStateService, List<UpdateHandler> updateHandlers,
                                        List<StateHandler> stateHandlers, EmptyHandler emptyHandler,
-                                       List<UpdateFilter> updateFilters, ObjectProvider<UpdateFilterService> updateFilterService,
-                                       ObjectProvider<AntiSpam> antiSpam, ObjectProvider<BannedCache> bannedCache,
-                                       ResponseSender responseSender) {
+                                       List<UpdateFilter> updateFilters, ObjectProvider<AntiSpam> antiSpam,
+                                       ObjectProvider<BannedCache> bannedCache, ResponseSender responseSender) {
         this.redisUserStateService = redisUserStateService;
         this.emptyHandler = emptyHandler;
-        this.updateFilterService = updateFilterService.getIfAvailable();
-        if (Objects.isNull(this.updateFilterService)) {
-            throw new TelegramCommonException("Отсутствует реализация интерфейса UpdateFilterService");
-        }
         this.antiSpam = antiSpam.getIfAvailable();
         if (Objects.isNull(this.antiSpam)) {
             throw new TelegramCommonException("Отсутствует реализация интерфейса AntiSpam");
@@ -82,14 +74,7 @@ public class TelegramUpdateEventListener {
             }
             stateHandlerMap.put(stateHandler.getUserState(), stateHandler);
         }
-        this.updateFilterMap = new HashMap<>();
-        for (UpdateFilter updateFilter : updateFilters) {
-            UpdateFilterType updateFilterType = updateFilter.getType();
-            if (Objects.isNull(updateFilterType)) {
-                throw new HandlerTypeNotFoundException("UpdateFilterType null для " + updateFilter.getClass().getName());
-            }
-            updateFilterMap.put(updateFilter.getType(), updateFilter);
-        }
+        this.updateFilters = updateFilters;
         log.debug("Загружено {} обработчиков апдейтов.", updateHandlers.size());
     }
 
@@ -113,7 +98,8 @@ public class TelegramUpdateEventListener {
                     return;
                 }
                 UpdateType updateType = UpdateType.fromUpdate(update);
-                if (handleState(update, updateType, chatId)) return;
+                if (handleState(update, updateType, chatId))
+                    return;
                 if (!handle(update, updateType)) {
                     Chat chat = UpdateType.getChat(update);
                     if (Objects.nonNull(chat) && Boolean.TRUE.equals(chat.isUserChat())) {
@@ -136,8 +122,10 @@ public class TelegramUpdateEventListener {
     }
 
     private boolean preHandle(Update update, Long chatId) {
-        if (bannedCache.get(chatId)) return true;
-        if (antiSpam.isSpam(chatId)) return true;
+        if (bannedCache.get(chatId))
+            return true;
+        if (antiSpam.isSpam(chatId))
+            return true;
         return handleFilter(update);
     }
 
@@ -164,10 +152,8 @@ public class TelegramUpdateEventListener {
     }
 
     private boolean handleFilter(Update update) {
-        UpdateFilterType updateFilterType = updateFilterService.getType(update);
-        if (Objects.nonNull(updateFilterType)) {
-            UpdateFilter updateFilter = updateFilterMap.get(updateFilterType);
-            if (Objects.nonNull(updateFilter)) {
+        for (UpdateFilter updateFilter : updateFilters) {
+            if (updateFilter.match(update)) {
                 updateFilter.handle(update);
                 return true;
             }
