@@ -1,0 +1,11 @@
+package tgb.cryptoexchange.tgcommon.exception;
+
+public class TelegramCommonException extends RuntimeException {
+    public TelegramCommonException(String message) {
+        super(message);
+    }
+
+  public TelegramCommonException(String message, Throwable cause) {
+    super(message, cause);
+  }
+}
