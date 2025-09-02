@@ -5,7 +5,8 @@ import org.springframework.context.ApplicationEvent;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 /**
- * Ивент с апдейтом
+ * Ивент с апдейтом, создаваемый инстансом бота при получении апдейта<br>
+ * {@link BotInstance#onUpdateReceived(Update)}
  */
 @Getter
 public class TelegramUpdateEvent extends ApplicationEvent {

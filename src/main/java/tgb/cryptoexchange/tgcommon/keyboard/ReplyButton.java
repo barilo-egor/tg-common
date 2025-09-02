@@ -3,6 +3,9 @@ package tgb.cryptoexchange.tgcommon.keyboard;
 import lombok.Builder;
 import lombok.Data;
 
+/**
+ * Представление Reply кнопки
+ */
 @Data
 @Builder
 public class ReplyButton {

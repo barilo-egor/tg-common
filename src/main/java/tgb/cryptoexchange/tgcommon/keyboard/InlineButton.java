@@ -2,26 +2,30 @@ package tgb.cryptoexchange.tgcommon.keyboard;
 
 import lombok.Builder;
 import lombok.Data;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.cryptoexchange.tgcommon.constants.CallbackQueryData;
+import tgb.cryptoexchange.tgcommon.exception.TelegramCommonException;
 
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
+import static tgb.cryptoexchange.tgcommon.service.CallbackDataService.SPLITTER;
+
+/**
+ * Представление Inline кнопки
+ */
 @Data
 @Builder
 public class InlineButton {
     private String text;
-    private String data;
+    private CallbackQueryData callbackQueryData;
     private InlineType inlineType;
 
-    public static InlineButton buildData(String text, String data) {
-        return build(InlineType.CALLBACK_DATA, text, data);
-    }
-
-    public static InlineButton build(InlineType inlineType, String text, String data) {
-        return InlineButton.builder()
-                .text(text)
-                .data(data)
-                .inlineType(inlineType)
-                .build();
-    }
-
+    /**
+     * Тип инлайн кнопки
+     */
     public enum InlineType {
         CALLBACK_DATA,
         URL,
@@ -29,4 +33,5 @@ public class InlineButton {
         SWITCH_INLINE_QUERY_CURRENT_CHAT,
         WEB_APP
     }
+
 }

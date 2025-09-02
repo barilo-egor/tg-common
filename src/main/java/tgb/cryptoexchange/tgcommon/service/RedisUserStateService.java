@@ -8,6 +8,11 @@ import tgb.cryptoexchange.tgcommon.constants.UserState;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
+/**
+ * Сервис для работы с состояние пользователя. Если от пользователя требуется ввод или отправка чего либо, для него следует
+ * сохранить состояние, для которого есть свой обработчик. Если за пользователем будет сохранено состояние, то
+ * независимо от типа апдейта обработка будет осуществлена обработчиком данного состояния.
+ */
 @Service
 public class RedisUserStateService {
 
@@ -20,19 +25,41 @@ public class RedisUserStateService {
         this.prefix = botName + ":" + "state_";
     }
 
+    /**
+     * Сохранение состояния пользователя
+     *
+     * @param chatId чат айди пользователя
+     * @param state  состояние пользователя
+     */
     public void save(Long chatId, UserState state) {
         redisTemplate.opsForValue().set(prefix + chatId, state, Duration.of(20, ChronoUnit.MINUTES));
     }
 
+    /**
+     * Сохранение состояния пользователя
+     *
+     * @param chatId          чат айди пользователя
+     * @param state           состояние пользователя
+     * @param durationMinutes продолжительность хранения в минутах
+     */
     public void save(Long chatId, UserState state, int durationMinutes) {
         redisTemplate.opsForValue().set(prefix + chatId, state, Duration.of(durationMinutes, ChronoUnit.MINUTES));
     }
 
-    public UserState get(Long key) {
-        return redisTemplate.opsForValue().get(prefix + key);
+    /**
+     * Получение состояния польхователя по его чат айди
+     * @param chatId чат айди пользователя
+     * @return состояние пользователя, либо null
+     */
+    public UserState get(Long chatId) {
+        return redisTemplate.opsForValue().get(prefix + chatId);
     }
 
-    public void delete(Long key) {
-        redisTemplate.delete(prefix + key);
+    /**
+     * Удаление состояния пользователя
+     * @param chatId чат айди пользователя
+     */
+    public void delete(Long chatId) {
+        redisTemplate.delete(prefix + chatId);
     }
 }

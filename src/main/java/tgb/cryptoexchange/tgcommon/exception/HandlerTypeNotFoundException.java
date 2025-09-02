@@ -1,6 +1,10 @@
 package tgb.cryptoexchange.tgcommon.exception;
 
-public class HandlerTypeNotFoundException extends RuntimeException {
+/**
+ * Пробрасывается для того, чтобы показать, что обработчик апдейта не был найден.
+ */
+public class HandlerTypeNotFoundException extends TelegramCommonException {
+
     public HandlerTypeNotFoundException(String message) {
         super(message);
     }

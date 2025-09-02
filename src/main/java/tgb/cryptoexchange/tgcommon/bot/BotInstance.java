@@ -7,6 +7,10 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+/**
+ * Инстанс бота, реализация TelegramLongPollingBot.<br>
+ * Требует пропертей bot.token и bot.username которые можно получить у <a href="https://t.me/BotFather">BotFather</a>
+ */
 @Component
 @Slf4j
 public class BotInstance extends TelegramLongPollingBot {

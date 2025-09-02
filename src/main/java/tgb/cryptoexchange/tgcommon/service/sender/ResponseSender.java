@@ -36,6 +36,9 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Класс для отправки ответов пользователю.
+ */
 @Component
 @Slf4j
 public class ResponseSender {
@@ -50,30 +53,86 @@ public class ResponseSender {
         this.botToken = botToken;
     }
 
+    /**
+     * Отправка текстового сообщения пользователю без клавиатуры и ответа на другое сообщение.
+     *
+     * @param chatId чат айди пользователя
+     * @param text   текст сообщения
+     * @return сообщение, если оно было успешно доставлено
+     */
     public Optional<Message> sendMessage(Long chatId, String text) {
         return sendMessage(chatId, text, null, null);
     }
 
+    /**
+     * Отправка текстового сообщения пользователю без клавиатуры
+     *
+     * @param chatId           чат айди пользователя
+     * @param text             текст сообщения
+     * @param replyToMessageId идентификатор сообщения на которое будет сделан ответ
+     * @return сообщение, если оно было успешно доставлено
+     */
     public Optional<Message> sendMessage(Long chatId, String text, Integer replyToMessageId) {
         return sendMessage(chatId, text, null, replyToMessageId);
     }
 
+    /**
+     * Отправка текстового сообщения пользователю без ответа на другое сообщение
+     *
+     * @param chatId        чат айди пользователя
+     * @param text          текст сообщения
+     * @param replyKeyboard клавиатура
+     * @return сообщение, если оно было успешно доставлено
+     */
     public Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard) {
         return sendMessage(chatId, text, replyKeyboard, null);
     }
 
-    public Optional<Message> sendMessage(Long chatId, String text, InlineButton... inlineButtons) {
-        return sendMessage(chatId, text, keyboardBuildService.buildInline(List.of(inlineButtons)), null);
-    }
-
+    /**
+     * Отправка текстового сообщения пользователю без ответа на другое сообщение
+     *
+     * @param chatId       чат айди пользователя
+     * @param text         текст сообщения
+     * @param replyButtons кнопки reply клавиатуры
+     * @return сообщение, если оно было успешно доставлено
+     */
     public Optional<Message> sendMessage(Long chatId, String text, ReplyButton... replyButtons) {
         return sendMessage(chatId, text, keyboardBuildService.buildReply(List.of(replyButtons)), null);
     }
 
-    public Optional<Message> sendMessage(Long chatId, String text, List<InlineButton> buttons) {
-        return sendMessage(chatId, text, keyboardBuildService.buildInline(buttons), null);
+    /**
+     * Отправка текстового сообщения пользователю без ответа на другое сообщение
+     *
+     * @param chatId        чат айди пользователя
+     * @param text          текст сообщения
+     * @param inlineButtons кнопки inline клавиатуры
+     * @return сообщение, если оно было успешно доставлено
+     */
+    public Optional<Message> sendMessage(Long chatId, String text, InlineButton... inlineButtons) {
+        return sendMessage(chatId, text, keyboardBuildService.buildInline(List.of(inlineButtons)), null);
     }
 
+    /**
+     * Отправка текстового сообщения пользователю без ответа на другое сообщение
+     *
+     * @param chatId        чат айди пользователя
+     * @param text          текст сообщения
+     * @param inlineButtons кнопки inline клавиатуры
+     * @return сообщение, если оно было успешно доставлено
+     */
+    public Optional<Message> sendMessage(Long chatId, String text, List<InlineButton> inlineButtons) {
+        return sendMessage(chatId, text, keyboardBuildService.buildInline(inlineButtons), null);
+    }
+
+    /**
+     * Отправка текстового сообщения пользователю
+     *
+     * @param chatId           чат айди пользователя
+     * @param text             текст сообщения
+     * @param replyKeyboard    клавиатура
+     * @param replyToMessageId идентификатор сообщения на которое будет сделан ответ
+     * @return сообщение, если оно было успешно доставлено
+     */
     public Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard, Integer replyToMessageId) {
         SendMessage sendMessage = SendMessage.builder()
                 .chatId(chatId.toString())
@@ -95,6 +154,13 @@ public class ResponseSender {
         }
     }
 
+    /**
+     * Отправка текстового сообщения пользователю без клавиатуры и ответа на другое сообщение без обработки исключения
+     * в случае неудочной отправки сообщения
+     *
+     * @param chatId чат айди пользователя
+     * @param text   текст сообщения
+     */
     public void sendMessageThrows(Long chatId, String text) throws TelegramApiException {
         bot.execute(SendMessage.builder()
                 .chatId(chatId.toString())
@@ -103,18 +169,52 @@ public class ResponseSender {
                 .build());
     }
 
+    /**
+     * Отправка сообщения с изображением пользователю без клавиатуры
+     *
+     * @param chatId  чат айди пользователя
+     * @param caption текст подписи
+     * @param photo   отправляемое изображение
+     * @return сообщение, если оно было успешно доставлено
+     */
     public Optional<Message> sendPhoto(Long chatId, String caption, InputFile photo) {
         return sendPhoto(chatId, caption, photo, null);
     }
 
+    /**
+     * Отправка сообщения с изображением пользователю
+     *
+     * @param chatId        чат айди пользователя
+     * @param caption       текст подписи
+     * @param photo         telegram file id изображения
+     * @param replyKeyboard клавиатура
+     * @return сообщение, если оно было успешно доставлено
+     */
     public Optional<Message> sendPhoto(Long chatId, String caption, String photo, ReplyKeyboard replyKeyboard) {
         return sendPhoto(chatId, caption, new InputFile(photo), replyKeyboard);
     }
 
+    /**
+     * Отправка сообщения с изображением пользователю без клавиатуры
+     *
+     * @param chatId  чат айди пользователя
+     * @param caption текст подписи
+     * @param photo   отправляемое изображение
+     * @return сообщение, если оно было успешно доставлено
+     */
     public Optional<Message> sendPhoto(Long chatId, String caption, String photo) {
         return sendPhoto(chatId, caption, new InputFile(photo), null);
     }
 
+    /**
+     * Отправка сообщения с изображением пользователю
+     *
+     * @param chatId        чат айди пользователя
+     * @param caption       текст подписи
+     * @param photo         отправляемое изображение
+     * @param replyKeyboard клавиатура
+     * @return сообщение, если оно было успешно доставлено
+     */
     public Optional<Message> sendPhoto(Long chatId, String caption, InputFile photo, ReplyKeyboard replyKeyboard) {
         try {
             return Optional.ofNullable(bot.execute(SendPhoto.builder()
@@ -130,19 +230,44 @@ public class ResponseSender {
         }
     }
 
+    /**
+     * Отправка сообщения с анимацией пользователю без клавиатуры и подписи
+     *
+     * @param chatId чат айди пользователя
+     * @param file   отправляемая анимация
+     * @return сообщение, если оно было успешно доставлено
+     */
     public Message sendAnimation(Long chatId, File file) {
         return sendAnimation(chatId, new InputFile(file), null, null);
     }
 
+    /**
+     * Отправка сообщения с анимацией пользователю
+     *
+     * @param chatId        чат айди пользователя
+     * @param caption       текст подписи
+     * @param animation     telegram file id анимации
+     * @param replyKeyboard клавиатура
+     * @return сообщение, если оно было успешно доставлено
+     */
     public Optional<Message> sendAnimation(Long chatId, String caption, String animation, ReplyKeyboard replyKeyboard) {
         return Optional.ofNullable(sendAnimation(chatId, new InputFile(animation), caption, replyKeyboard));
     }
 
-    public Message sendAnimation(Long chatId, InputFile inputFile, String caption, ReplyKeyboard replyKeyboard) {
+    /**
+     * Отправка сообщения с анимацией пользователю
+     *
+     * @param chatId        чат айди пользователя
+     * @param caption       текст подписи
+     * @param animation     отправляемая анимация
+     * @param replyKeyboard клавиатура
+     * @return сообщение, если оно было успешно доставлено
+     */
+    public Message sendAnimation(Long chatId, InputFile animation, String caption, ReplyKeyboard replyKeyboard) {
         try {
             return bot.execute(SendAnimation.builder()
                     .chatId(chatId.toString())
-                    .animation(inputFile)
+                    .animation(animation)
                     .caption(caption)
                     .replyMarkup(replyKeyboard)
                     .parseMode("html")
@@ -153,6 +278,12 @@ public class ResponseSender {
         }
     }
 
+    /**
+     * Удаление сообщения из чата с пользователем
+     *
+     * @param chatId    чат айди пользователя
+     * @param messageId идентификатор удаляемого сообщения
+     */
     public void deleteMessage(Long chatId, Integer messageId) {
         try {
             bot.execute(DeleteMessage.builder()
@@ -164,18 +295,37 @@ public class ResponseSender {
         }
     }
 
+    /**
+     * Изменение сообщения в чате с пользователем без клавиатуры
+     *
+     * @param chatId    чат айди пользователя
+     * @param messageId идентификатор изменяемого сообщения
+     * @param text      текст
+     */
     public void sendEditedMessageText(Long chatId, Integer messageId, String text) {
         sendEditedMessageText(chatId, messageId, text, (InlineKeyboardMarkup) null);
     }
 
+    /**
+     * Изменение сообщения в чате с пользователем
+     *
+     * @param chatId    чат айди пользователя
+     * @param messageId идентификатор изменяемого сообщения
+     * @param text      текст
+     * @param buttons   inline кнопки клавиатуры
+     */
     public void sendEditedMessageText(Long chatId, Integer messageId, String text, List<InlineButton> buttons) {
         sendEditedMessageText(chatId, messageId, text, keyboardBuildService.buildInline(buttons));
     }
 
-    public void sendEditedMessageText(Long chatId, Integer messageId, String text, ReplyKeyboard replyKeyboard) {
-        sendEditedMessageText(chatId, messageId, text, (InlineKeyboardMarkup) replyKeyboard);
-    }
-
+    /**
+     * Изменение сообщения в чате с пользователем
+     *
+     * @param chatId    чат айди пользователя
+     * @param messageId идентификатор изменяемого сообщения
+     * @param text      текст
+     * @param keyboard  inline клавиатура
+     */
     public void sendEditedMessageText(Long chatId, Integer messageId, String text, InlineKeyboardMarkup keyboard) {
         try {
             bot.execute(EditMessageText.builder()
@@ -190,6 +340,14 @@ public class ResponseSender {
         }
     }
 
+    /**
+     * Изменение сообщения в чате с пользователем без обработки исключения в случае неудачного изменения сообщения
+     *
+     * @param chatId    чат айди пользователя
+     * @param messageId идентификатор изменяемого сообщения
+     * @param text      текст
+     * @param keyboard  inline клавиатура
+     */
     public void sendEditedMessageTextThrows(Long chatId, Integer messageId, String text, InlineKeyboardMarkup keyboard) throws TelegramApiException {
         bot.execute(EditMessageText.builder()
                 .chatId(chatId.toString())
@@ -200,6 +358,14 @@ public class ResponseSender {
                 .build());
     }
 
+    /**
+     * Изменение медиа группы в чате с пользователем
+     *
+     * @param chatId    чат айди пользователя
+     * @param messageId идентификатор изменяемого сообщения
+     * @param text      текст
+     * @param keyboard  inline клавиатура
+     */
     public void sendEditMessageMedia(Long chatId, Integer messageId, String fileId, String text, InlineKeyboardMarkup keyboard) {
         try {
             bot.execute(build(chatId, messageId, fileId, text, keyboard));
@@ -208,6 +374,14 @@ public class ResponseSender {
         }
     }
 
+    /**
+     * Изменение группы медиа в чате с пользователем без обработки исключения в случае неудачного изменения сообщения
+     *
+     * @param chatId    чат айди пользователя
+     * @param messageId идентификатор изменяемого сообщения
+     * @param text      текст
+     * @param keyboard  inline клавиатура
+     */
     public void sendEditMessageMediaThrows(Long chatId, Integer messageId, String fileId, String text, InlineKeyboardMarkup keyboard) throws TelegramApiException {
         bot.execute(build(chatId, messageId, fileId, text, keyboard));
     }
@@ -223,55 +397,121 @@ public class ResponseSender {
         return editMessageMedia;
     }
 
-    public void sendEditMessageCaption(Long chatId, Integer messageId, String text, InlineKeyboardMarkup keyboardMarkup) {
+    /**
+     * Изменение подписи в чате с пользователем
+     *
+     * @param chatId    чат айди пользователя
+     * @param messageId идентификатор изменяемого сообщения
+     * @param text      текст
+     * @param keyboard  inline клавиатура
+     */
+    public void sendEditMessageCaption(Long chatId, Integer messageId, String text, InlineKeyboardMarkup keyboard) {
         try {
             EditMessageCaption editMessageCaption = new EditMessageCaption();
             editMessageCaption.setChatId(chatId.toString());
             editMessageCaption.setMessageId(messageId);
             editMessageCaption.setCaption(text);
             editMessageCaption.setParseMode("HTML");
-            editMessageCaption.setReplyMarkup(keyboardMarkup);
+            editMessageCaption.setReplyMarkup(keyboard);
             bot.execute(editMessageCaption);
         } catch (TelegramApiException e) {
             log.error("Ошибка отправки EditMessageCaption: ", e);
         }
     }
 
-    public Message sendFile(Long chatId, String caption, String fileId) {
+    /**
+     * Отправка файла без клавиатуры
+     *
+     * @param chatId  чат айди пользователя
+     * @param caption подпись к файлу
+     * @param fileId  telegram file id файла
+     * @return сообщение, в случае если оно было успешно доставлено
+     */
+    public Optional<Message> sendFile(Long chatId, String caption, String fileId) {
         return sendFile(chatId, new InputFile(fileId), caption);
     }
 
-    public Message sendFile(Long chatId, File file) {
+    /**
+     * Отправка файла без клавиатуры и подписи
+     *
+     * @param chatId чат айди пользователя
+     * @param file   отправляемый файл
+     * @return сообщение, в случае если оно было успешно доставлено
+     */
+    public Optional<Message> sendFile(Long chatId, File file) {
         return sendFile(chatId, new InputFile(file), null);
     }
 
-    public Message sendFile(Long chatId, InputFile inputFile) {
+    /**
+     * Отправка файла без клавиатуры и подписи
+     *
+     * @param chatId    чат айди пользователя
+     * @param inputFile отправляемый файл
+     * @return сообщение, в случае если оно было успешно доставлено
+     */
+    public Optional<Message> sendFile(Long chatId, InputFile inputFile) {
         return sendFile(chatId, inputFile, null);
     }
 
-    public Message sendFile(Long chatId, InputFile inputFile, String caption) {
+    /**
+     * Отправка файла без клавиатуры
+     *
+     * @param chatId    чат айди пользователя
+     * @param inputFile отправляемый файл
+     * @param caption   подпись к файлу
+     * @return сообщение, в случае если оно было успешно доставлено
+     */
+    public Optional<Message> sendFile(Long chatId, InputFile inputFile, String caption) {
         return sendFile(chatId, inputFile, caption, null);
     }
 
-    public Message sendFile(Long chatId, InputFile inputFile, String caption, ReplyKeyboard replyKeyboard) {
+    /**
+     * Отправка файла
+     *
+     * @param chatId        чат айди пользователя
+     * @param inputFile     отправляемый файл
+     * @param caption       подпись к файлу
+     * @param replyKeyboard клавиатура
+     * @return сообщение, в случае если оно было успешно доставлено
+     */
+    public Optional<Message> sendFile(Long chatId, InputFile inputFile, String caption, ReplyKeyboard replyKeyboard) {
         try {
-            return bot.execute(SendDocument.builder()
-                    .chatId(chatId.toString())
-                    .document(inputFile)
-                    .caption(caption)
-                    .parseMode("html")
-                    .replyMarkup(replyKeyboard)
-                    .build());
+            return Optional.of(
+                    bot.execute(SendDocument.builder()
+                            .chatId(chatId.toString())
+                            .document(inputFile)
+                            .caption(caption)
+                            .parseMode("html")
+                            .replyMarkup(replyKeyboard)
+                            .build())
+            );
         } catch (TelegramApiException e) {
             log.error("Ошибка отправки SendDocument", e);
-            return null;
+            return Optional.empty();
         }
     }
 
+    /**
+     * Отправка видео без клавиатуры
+     *
+     * @param chatId        чат айди пользователя
+     * @param inputFile     отправляемый файл
+     * @param caption       подпись к файлу
+     * @return сообщение, в случае если оно было успешно доставлено
+     */
     public Message sendVideo(Long chatId, InputFile inputFile, String caption) {
         return sendVideo(chatId, inputFile, caption, null);
     }
 
+    /**
+     * Отправка видео
+     *
+     * @param chatId        чат айди пользователя
+     * @param inputFile     отправляемый файл
+     * @param caption       подпись к файлу
+     * @param replyKeyboard клавиатура
+     * @return сообщение, в случае если оно было успешно доставлено
+     */
     public Message sendVideo(Long chatId, InputFile inputFile, String caption, ReplyKeyboard replyKeyboard) {
         try {
             return bot.execute(SendVideo.builder()
@@ -287,28 +527,13 @@ public class ResponseSender {
         }
     }
 
-    public void downloadFile(Document document, String localFilePath) throws IOException, URISyntaxException {
-        org.telegram.telegrambots.meta.api.objects.File file = getFilePath(document);
-        java.io.File localFile = new java.io.File(localFilePath);
-        URI uri = new URI(file.getFileUrl(botToken));
-        InputStream is = uri.toURL().openStream();
-        FileUtils.copyInputStreamToFile(is, localFile);
-    }
-
-    private org.telegram.telegrambots.meta.api.objects.File getFilePath(Document document) {
-        GetFile getFile = new GetFile();
-        getFile.setFileId(document.getFileId());
-        return execute(getFile);
-    }
-
-    private org.telegram.telegrambots.meta.api.objects.File execute(GetFile getFile) {
-        try {
-            return bot.execute(getFile);
-        } catch (TelegramApiException e) {
-            throw new TelegramCommonException("Не получилось скачать файл: " + getFile, e);
-        }
-    }
-
+    /**
+     * Отправка ответа на нажатие inline query кнопки
+     * @param inlineQueryId идентфиикатор {@link org.telegram.telegrambots.meta.api.objects.inlinequery.InlineQuery}
+     * @param title заголовок
+     * @param description описание
+     * @param messageText текста
+     */
     public void sendAnswerInlineQuery(String inlineQueryId, String title, String description, String messageText) {
         try {
             bot.execute(AnswerInlineQuery.builder().inlineQueryId(inlineQueryId)
@@ -327,12 +552,12 @@ public class ResponseSender {
         }
     }
 
-    public void deleteCallbackMessageIfExists(Update update) {
-        Long chatId = UpdateType.getChatId(update);
-        if (update.hasCallbackQuery())
-            deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-    }
-
+    /**
+     * Отправка ответа на нажатие inline кнопки
+     * @param callbackQueryId идентфиикатор {@link org.telegram.telegrambots.meta.api.objects.CallbackQuery}
+     * @param text текст сообщения
+     * @param showAlert true для окна с подтверждением, false для всплывающего окна
+     */
     public void sendAnswerCallbackQuery(String callbackQueryId, String text, boolean showAlert) {
         try {
             bot.execute(AnswerCallbackQuery.builder()
@@ -345,6 +570,11 @@ public class ResponseSender {
         }
     }
 
+    /**
+     * Отправка группы медиа
+     * @param chatId чат айди пользователя
+     * @param medias список медиа для отправки
+     */
     public void sendMedia(Long chatId, List<InputMedia> medias) {
         SendMediaGroup sendMediaGroup = new SendMediaGroup();
         sendMediaGroup.setChatId(chatId.toString());
@@ -356,6 +586,12 @@ public class ResponseSender {
         }
     }
 
+    /**
+     * Изменение клавиатуры сообщения
+     * @param chatId чат айди пользователя
+     * @param messageId идентификатор сообщения в чате с пользователем
+     * @param keyboard новая клавиатура
+     */
     public void sendEditMessageReplyMarkup(Long chatId, Integer messageId, InlineKeyboardMarkup keyboard) {
         EditMessageReplyMarkup replyMarkup = new EditMessageReplyMarkup();
         replyMarkup.setChatId(chatId);
@@ -368,6 +604,10 @@ public class ResponseSender {
         }
     }
 
+    /**
+     * Отправка сообщения пользователю
+     * @param botApiMethodMessage отправляемое сообщение
+     */
     public void execute(BotApiMethodMessage botApiMethodMessage) {
         try {
             bot.execute(botApiMethodMessage);
