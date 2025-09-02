@@ -2,16 +2,12 @@ package tgb.cryptoexchange.tgcommon.keyboard;
 
 import lombok.Builder;
 import lombok.Data;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.cryptoexchange.tgcommon.constants.CallbackQueryData;
-import tgb.cryptoexchange.tgcommon.exception.TelegramCommonException;
+import tgb.cryptoexchange.tgcommon.handler.CallbackQueryHandler;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-
-import static tgb.cryptoexchange.tgcommon.service.CallbackDataService.SPLITTER;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Представление Inline кнопки
@@ -19,9 +15,55 @@ import static tgb.cryptoexchange.tgcommon.service.CallbackDataService.SPLITTER;
 @Data
 @Builder
 public class InlineButton {
+
+    public static final String CALLBACK_DATA_SPLITTER = ":";
+
+    /**
+     * Текст кнопки
+     */
     private String text;
-    private CallbackQueryData callbackQueryData;
+
+    /**
+     * Уникальная строка обработчика ({@link CallbackQueryHandler#getId()} ()}).
+     * По ней будет определен нужный обработчик при нажатии на кнопку пользователем.
+     */
+    private String id;
+
+    /**
+     * Тип кнопки
+     */
     private InlineType inlineType;
+
+    /**
+     * Аргументы кнопки (для {@link InlineType#CALLBACK_DATA})
+     */
+    private List<String> arguments;
+
+    public void addArgument(String argument) {
+        this.arguments.add(argument);
+    }
+
+    public void addArguments(Collection<String> arguments) {
+        this.arguments.addAll(arguments);
+    }
+
+    public void addArguments(String... arguments) {
+        this.arguments.addAll(Arrays.asList(arguments));
+    }
+
+    /**
+     * Формирование data для кнопки. В случае, если тип кнопки {@link InlineType#CALLBACK_DATA}, то к data
+     * добавляются аргументы. Иначе в data будет только {@link CallbackQueryData#getData()}
+     *
+     * @return сформированная data
+     */
+    public String buildData() {
+        return id + (
+                InlineType.CALLBACK_DATA.equals(inlineType)
+                        ? CALLBACK_DATA_SPLITTER + String.join(":", arguments)
+                        : ""
+        );
+    }
 
     /**
      * Тип инлайн кнопки

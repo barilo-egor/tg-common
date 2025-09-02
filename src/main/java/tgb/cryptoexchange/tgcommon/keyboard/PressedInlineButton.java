@@ -9,8 +9,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import static tgb.cryptoexchange.tgcommon.service.CallbackDataService.SPLITTER;
-
 /**
  * Объект представление нажатой пользователем inline кнопки
  */
@@ -58,7 +56,7 @@ public class PressedInlineButton {
      * @return значение аргумента
      */
     public String getArgument(int index) {
-        String[] split = data.split(SPLITTER);
+        String[] split = data.split(InlineButton.CALLBACK_DATA_SPLITTER);
         if (split.length - 1 < index) {
             return null;
         }
@@ -104,7 +102,7 @@ public class PressedInlineButton {
      * @return список значений
      */
     public Set<Integer> getIntArguments() {
-        String[] split = data.split(SPLITTER);
+        String[] split = data.split(InlineButton.CALLBACK_DATA_SPLITTER);
         Set<Integer> result = new HashSet<>();
         if (split.length <= 1) {
             return result;
@@ -141,7 +139,7 @@ public class PressedInlineButton {
         if (Objects.isNull(data)) {
             return false;
         }
-        String[] split = data.split(SPLITTER);
+        String[] split = data.split(InlineButton.CALLBACK_DATA_SPLITTER);
         return split.length > 1;
     }
 }

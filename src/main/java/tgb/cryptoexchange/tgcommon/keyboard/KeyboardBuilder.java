@@ -85,7 +85,7 @@ public class KeyboardBuilder {
     private InlineKeyboardButton parse(InlineButton inlineButton) {
         InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
         inlineKeyboardButton.setText(inlineButton.getText());
-        String data = inlineButton.getCallbackQueryData().getData();
+        String data = inlineButton.buildData();
         InlineButton.InlineType inlineType = inlineButton.getInlineType();
         switch (Objects.isNull(inlineType) ? CALLBACK_DATA : inlineType) {
             case URL:

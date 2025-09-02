@@ -1,6 +1,5 @@
 package tgb.cryptoexchange.tgcommon.handler;
 
-import tgb.cryptoexchange.tgcommon.constants.CallbackQueryData;
 import tgb.cryptoexchange.tgcommon.keyboard.PressedInlineButton;
 
 /**
@@ -16,7 +15,7 @@ public interface CallbackQueryHandler {
 
     /**
      * Используется для определения обработчика для апдейта.
-     * @return data обрабатываемая данным обработчиком
+     * @return уникальная строка для данного обработчика
      */
-    CallbackQueryData getCallbackQueryData();
+    String getId();
 }
