@@ -15,12 +15,12 @@ public class SlashCommandsHandler implements TextHandler {
 
     public SlashCommandsHandler(List<SlashCommandHandler> slashCommandHandlers) {
         for (SlashCommandHandler handler : slashCommandHandlers) {
-            handlers.put(handler.getSlashCommand(), handler);
+            handlers.put(handler.getSlashCommand().replace("/", ""), handler);
         }
     }
 
     public boolean handle(Message message) {
-        SlashCommandHandler slashCommandHandler = handlers.get(message.getText());
+        SlashCommandHandler slashCommandHandler = handlers.get(message.getText().replace("/", ""));
         if (Objects.nonNull(slashCommandHandler)) {
             slashCommandHandler.handle(message);
             return true;
