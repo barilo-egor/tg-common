@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
+import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage;
 import org.telegram.telegrambots.meta.api.methods.send.*;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.*;
 import org.telegram.telegrambots.meta.api.objects.Document;
@@ -364,6 +365,14 @@ public class ResponseSender {
             bot.execute(replyMarkup);
         } catch (TelegramApiException e) {
             log.error("Ошибка отправки EditMessageReplyMarkup", e);
+        }
+    }
+
+    public void execute(BotApiMethodMessage botApiMethodMessage) {
+        try {
+            bot.execute(botApiMethodMessage);
+        } catch (TelegramApiException e) {
+            log.error("Ошибка отправки BotApiMethodMessage", e);
         }
     }
 }

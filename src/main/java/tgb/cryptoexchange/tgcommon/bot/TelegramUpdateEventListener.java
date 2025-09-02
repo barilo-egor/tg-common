@@ -117,7 +117,7 @@ public class TelegramUpdateEventListener {
                 if (!handle(update, updateType)) {
                     Chat chat = UpdateType.getChat(update);
                     if (Objects.nonNull(chat) && Boolean.TRUE.equals(chat.isUserChat())) {
-                        emptyHandler.getEmptyMessage(UpdateType.getChatId(update));
+                        responseSender.execute(emptyHandler.getEmptyMessage(UpdateType.getChatId(update)));
                     }
                 }
             }
