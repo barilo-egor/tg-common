@@ -2,6 +2,7 @@ package tgb.cryptoexchange.tgcommon.keyboard;
 
 import lombok.Data;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.MaybeInaccessibleMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.cryptoexchange.tgcommon.exception.TelegramCommonException;
 
@@ -28,7 +29,7 @@ public class PressedInlineButton {
     /**
      * Сообщение, к которому была прикреплена клавиатура с нажатой кнопкой
      */
-    private Message message;
+    private MaybeInaccessibleMessage message;
 
     /**
      * Формирование кнопки из {@link CallbackQuery}
@@ -39,6 +40,7 @@ public class PressedInlineButton {
         var button = new PressedInlineButton();
         button.setData(callbackQuery.getData());
         button.setCallbackQueryId(callbackQuery.getId());
+        button.setMessage(callbackQuery.getMessage());
         return button;
     }
 
