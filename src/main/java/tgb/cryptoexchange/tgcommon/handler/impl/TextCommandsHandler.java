@@ -25,7 +25,7 @@ public class TextCommandsHandler implements TextHandler {
     @Override
     public boolean handle(Message message) {
         TextCommandHandler handler = textCommandHandlerMap.get(message.getText());
-        if (Objects.nonNull(handler)) {
+        if (Objects.nonNull(handler) && handler.hasAccess(message.getChatId())) {
             handler.handle(message);
             return true;
         }

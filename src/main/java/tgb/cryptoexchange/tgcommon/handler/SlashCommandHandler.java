@@ -5,7 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 /**
  * Интерфейс для обработчиков месседжей с текстом типа {@link tgb.cryptoexchange.tgcommon.constants.TextMessageType#SLASH_COMMAND}
  */
-public interface SlashCommandHandler {
+public interface SlashCommandHandler extends WithAccessHandler {
 
     /**
      * Обработка месседжа

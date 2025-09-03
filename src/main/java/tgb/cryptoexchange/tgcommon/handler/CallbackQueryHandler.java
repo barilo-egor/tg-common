@@ -5,7 +5,7 @@ import tgb.cryptoexchange.tgcommon.keyboard.PressedInlineButton;
 /**
  * Интерфейс для обработчиков апдейтов типа {@link tgb.cryptoexchange.tgcommon.constants.UpdateType#CALLBACK_QUERY}
  */
-public interface CallbackQueryHandler {
+public interface CallbackQueryHandler extends WithAccessHandler {
 
     /**
      * Метод обработки апдейта

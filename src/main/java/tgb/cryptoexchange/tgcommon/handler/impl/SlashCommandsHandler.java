@@ -21,7 +21,7 @@ public class SlashCommandsHandler implements TextHandler {
 
     public boolean handle(Message message) {
         SlashCommandHandler slashCommandHandler = handlers.get(message.getText().replace("/", ""));
-        if (Objects.nonNull(slashCommandHandler)) {
+        if (Objects.nonNull(slashCommandHandler) && slashCommandHandler.hasAccess(message.getChatId())) {
             slashCommandHandler.handle(message);
             return true;
         }

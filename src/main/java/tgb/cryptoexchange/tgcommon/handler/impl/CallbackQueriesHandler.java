@@ -27,7 +27,9 @@ public class CallbackQueriesHandler implements UpdateHandler {
     public boolean handle(Update update) {
         var pressedButton = PressedInlineButton.build(update.getCallbackQuery());
         CallbackQueryHandler callbackQueryHandler = callbackQueryHandlerMap.get(pressedButton.getArgument(0));
-        if (Objects.isNull(callbackQueryHandler)) return false;
+        if (Objects.isNull(callbackQueryHandler) || !callbackQueryHandler.hasAccess(update.getCallbackQuery().getMessage().getChatId())) {
+            return false;
+        }
         callbackQueryHandler.handle(pressedButton);
         return true;
     }
