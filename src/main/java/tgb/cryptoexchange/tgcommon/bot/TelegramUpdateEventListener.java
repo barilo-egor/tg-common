@@ -5,6 +5,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.cryptoexchange.tgcommon.constants.UpdateType;
@@ -125,7 +126,10 @@ public class TelegramUpdateEventListener {
                 if (!handle(update, updateType)) {
                     Chat chat = UpdateType.getChat(update);
                     if (Objects.nonNull(chat) && Boolean.TRUE.equals(chat.isUserChat())) {
-                        responseSender.execute(emptyHandler.getEmptyMessage(UpdateType.getChatId(update)));
+                        BotApiMethodMessage message = emptyHandler.getEmptyMessage(UpdateType.getChatId(update));
+                        if (Objects.nonNull(message)) {
+                            responseSender.execute(message);
+                        }
                     }
                 }
             }
