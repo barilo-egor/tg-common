@@ -23,6 +23,10 @@ import tgb.cryptoexchange.tgcommon.service.sender.ResponseSender;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -404,7 +408,7 @@ class TelegramUpdateEventListenerTest {
 
     @Test
     @DisplayName("update(TelegramUpdateEvent event) - поступление апдейтов во время обработки другого апдейта - должен пропустить обработку новых апдейтов")
-    void shouldSkipUpdatesIfOneAlreadyProcessing() {
+    void shouldSkipUpdatesIfOneAlreadyProcessing() throws InterruptedException {
         when(bannedCacheProvider.getIfAvailable()).thenReturn(bannedCache);
         when(antiSpamProvider.getIfAvailable()).thenReturn(antiSpam);
 
@@ -422,21 +426,44 @@ class TelegramUpdateEventListenerTest {
         update.setMessage(message);
         TelegramUpdateEvent event = new TelegramUpdateEvent(new Object(), update);
 
-        when(bannedCache.get(chatId)).thenAnswer(invocationOnMock -> {
-            Thread.sleep(5000);
-            return true;
-        });
-        listener.update(event);
-        for (int i = 0; i < 5; i++) {
-            Update skipUpdate = new Update();
-            Message skipUpdateMessage = new Message();
-            Chat skipUpdateChat = new Chat();
-            skipUpdateChat.setId(chatId + i + 1);
-            skipUpdateChat.setType("private");
-            skipUpdateMessage.setChat(skipUpdateChat);
-            skipUpdate.setMessage(skipUpdateMessage);
-            listener.update(new TelegramUpdateEvent(new Object(), skipUpdate));
+        try (ExecutorService executor = Executors.newFixedThreadPool(5);
+             ExecutorService lockThreadExecutorService = Executors.newFixedThreadPool(1)) {
+            CountDownLatch latch = new CountDownLatch(1);
+            CountDownLatch latch2 = new CountDownLatch(1);
+
+            when(bannedCache.get(chatId)).thenAnswer(invocationOnMock -> {
+                latch.countDown();
+                latch2.await();
+                return true;
+            });
+            lockThreadExecutorService.execute(() -> listener.update(event));
+            latch.await();
+            for (int i = 0; i < 5; i++) {
+                Update skipUpdate = new Update();
+                Message skipUpdateMessage = new Message();
+                Chat skipUpdateChat = new Chat();
+                skipUpdateChat.setId(chatId);
+                skipUpdateChat.setType("private");
+                skipUpdateMessage.setChat(skipUpdateChat);
+                skipUpdate.setMessage(skipUpdateMessage);
+                executor.submit(() -> {
+                    listener.update(new TelegramUpdateEvent(new Object(), skipUpdate));
+                });
+            }
+            executor.shutdown();
+            if (!executor.awaitTermination(2, TimeUnit.SECONDS)) {
+                throw new RuntimeException("Lock thread timed out");
+            }
+            latch2.countDown();
+            lockThreadExecutorService.shutdown();
+            if (!lockThreadExecutorService.awaitTermination(2, TimeUnit.SECONDS)) {
+                throw new RuntimeException("Lock thread timed out");
+            }
+            verify(bannedCache).get(chatId);
+            listener.update(event);
+            verify(bannedCache, times(2)).get(chatId);
         }
-        verify(bannedCache).get(chatId);
     }
+
+
 }
