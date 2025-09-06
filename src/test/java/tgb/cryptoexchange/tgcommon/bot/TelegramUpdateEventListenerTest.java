@@ -456,7 +456,7 @@ class TelegramUpdateEventListenerTest {
         Message message = new Message();
         Chat chat = new Chat();
         chat.setId(chatId);
-        chat.setType("private");
+        chat.setType("group");
         message.setChat(chat);
         update.setChannelPost(message);
         listener.update(new TelegramUpdateEvent(new Object(), update));
