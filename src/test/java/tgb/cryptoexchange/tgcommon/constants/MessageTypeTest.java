@@ -24,7 +24,7 @@ class MessageTypeTest {
     }
 
     @Test
-    @DisplayName("fromMessage(Message message) - месседж с текстом - возвращен PHOTO")
+    @DisplayName("fromMessage(Message message) - месседж с фото - возвращен PHOTO")
     void shouldReturnPHOTOFromMessageWithPhoto() {
         Message message = new Message();
         List<PhotoSize> photos = new ArrayList<>();
@@ -34,7 +34,7 @@ class MessageTypeTest {
     }
 
     @Test
-    @DisplayName("fromMessage(Message message) - месседж с текстом - возвращен VIDEO")
+    @DisplayName("fromMessage(Message message) - месседж с видео - возвращен VIDEO")
     void shouldReturnVIDEOFromMessageWithVideo() {
         Message message = new Message();
         message.setVideo(new Video());
@@ -42,15 +42,15 @@ class MessageTypeTest {
     }
 
     @Test
-    @DisplayName("fromMessage(Message message) - месседж с текстом - возвращен AUDIO")
-    void shouldReturnAUDIOFromMessageWithVideo() {
+    @DisplayName("fromMessage(Message message) - месседж с аудио - возвращен AUDIO")
+    void shouldReturnAUDIOFromMessageWithAudio() {
         Message message = new Message();
         message.setAudio(new Audio());
         assertEquals(MessageType.AUDIO, MessageType.fromMessage(message));
     }
 
     @Test
-    @DisplayName("fromMessage(Message message) - месседж с текстом - возвращен DOCUMENT")
+    @DisplayName("fromMessage(Message message) - месседж с документом - возвращен DOCUMENT")
     void shouldReturnDOCUMENTFromMessageWithDocument() {
         Message message = new Message();
         message.setDocument(new Document());
@@ -58,7 +58,7 @@ class MessageTypeTest {
     }
 
     @Test
-    @DisplayName("fromMessage(Message message) - месседж с текстом - возвращен STICKER")
+    @DisplayName("fromMessage(Message message) - месседж с стикером - возвращен STICKER")
     void shouldReturnSTICKERFromMessageWithSticker() {
         Message message = new Message();
         message.setSticker(new Sticker());
@@ -66,7 +66,7 @@ class MessageTypeTest {
     }
 
     @Test
-    @DisplayName("fromMessage(Message message) - месседж с текстом - возвращен ANIMATION")
+    @DisplayName("fromMessage(Message message) - месседж с анимацией - возвращен ANIMATION")
     void shouldReturnANIMATIONFromMessageWithAnimation() {
         Message message = new Message();
         message.setAnimation(new Animation());
@@ -74,7 +74,7 @@ class MessageTypeTest {
     }
 
     @Test
-    @DisplayName("fromMessage(Message message) - месседж с текстом - возвращен VOICE")
+    @DisplayName("fromMessage(Message message) - месседж с голосовым сообщением - возвращен VOICE")
     void shouldReturnVoiceFromMessageWithVoice() {
         Message message = new Message();
         message.setVoice(new Voice());
@@ -82,7 +82,7 @@ class MessageTypeTest {
     }
 
     @Test
-    @DisplayName("fromMessage(Message message) - месседж с текстом - возвращен VIDEO_NOTE")
+    @DisplayName("fromMessage(Message message) - месседж с видео сообщением - возвращен VIDEO_NOTE")
     void shouldReturnVIDEOFromMessageWithVideoNote() {
         Message message = new Message();
         message.setVideoNote(new VideoNote());
@@ -90,7 +90,7 @@ class MessageTypeTest {
     }
 
     @Test
-    @DisplayName("fromMessage(Message message) - месседж с текстом - возвращен CONTACT")
+    @DisplayName("fromMessage(Message message) - месседж с контактом - возвращен CONTACT")
     void shouldReturnCONTACTFromMessageWithContact() {
         Message message = new Message();
         message.setContact(new Contact());
@@ -98,7 +98,7 @@ class MessageTypeTest {
     }
 
     @Test
-    @DisplayName("fromMessage(Message message) - месседж с текстом - возвращен LOCATION")
+    @DisplayName("fromMessage(Message message) - месседж с гео - возвращен LOCATION")
     void shouldReturnLOCATIONFromMessageWithLocation() {
         Message message = new Message();
         message.setLocation(new Location());
@@ -106,7 +106,7 @@ class MessageTypeTest {
     }
 
     @Test
-    @DisplayName("fromMessage(Message message) - месседж с текстом - возвращен VENUE")
+    @DisplayName("fromMessage(Message message) - месседж с местоположением - возвращен VENUE")
     void shouldReturnVENUEFromMessageWithVenue() {
         Message message = new Message();
         message.setVenue(new Venue());
@@ -114,7 +114,7 @@ class MessageTypeTest {
     }
 
     @Test
-    @DisplayName("fromMessage(Message message) - месседж с текстом - возвращен POLL")
+    @DisplayName("fromMessage(Message message) - месседж с голосованием - возвращен POLL")
     void shouldReturnPOLLFromMessageWithPoll() {
         Message message = new Message();
         message.setPoll(new Poll());
@@ -122,7 +122,7 @@ class MessageTypeTest {
     }
 
     @Test
-    @DisplayName("fromMessage(Message message) - месседж с текстом - возвращен DICE")
+    @DisplayName("fromMessage(Message message) - месседж с кубиком - возвращен DICE")
     void shouldReturnDICEFromMessageWithDice() {
         Message message = new Message();
         message.setDice(new Dice());
