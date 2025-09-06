@@ -29,6 +29,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -62,10 +63,18 @@ class TelegramUpdateEventListenerTest {
     @DisplayName("new TelegramUpdateEventListener - отсутствует antiSpam - проброшен TelegramCommonException")
     void shouldThrowTelegramCommonExceptionIfAntiSpamIsNull() {
         when(antiSpamProvider.getIfAvailable()).thenReturn(null);
-        assertThrows(TelegramCommonException.class, () -> new TelegramUpdateEventListener(
-                redisUserStateService, new ArrayList<>(), new ArrayList<>(),
-                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender
-        ));
+        Supplier<TelegramUpdateEventListener> constructorSupplier = () ->
+                new TelegramUpdateEventListener(
+                        redisUserStateService,
+                        new ArrayList<>(),
+                        new ArrayList<>(),
+                        emptyHandler,
+                        new ArrayList<>(),
+                        antiSpamProvider,
+                        bannedCacheProvider,
+                        responseSender
+                );
+        assertThrows(TelegramCommonException.class, constructorSupplier::get);
     }
 
 
@@ -74,10 +83,11 @@ class TelegramUpdateEventListenerTest {
     void shouldThrowTelegramCommonExceptionIfBannedCacheIsNull() {
         when(antiSpamProvider.getIfAvailable()).thenReturn(antiSpam);
         when(bannedCacheProvider.getIfAvailable()).thenReturn(null);
-        assertThrows(TelegramCommonException.class, () -> new TelegramUpdateEventListener(
+        Supplier<TelegramUpdateEventListener> constructorSupplier = () -> new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), new ArrayList<>(),
                 emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender
-        ));
+        );
+        assertThrows(TelegramCommonException.class, constructorSupplier::get);
     }
 
     @Test
@@ -94,10 +104,11 @@ class TelegramUpdateEventListenerTest {
         mockedUpdateHandlers.add(updateHandlerWithNonNullUpdateType);
         mockedUpdateHandlers.add(updateHandlerWithNullUpdateType);
 
-        assertThrows(HandlerTypeNotFoundException.class, () -> new TelegramUpdateEventListener(
+        Supplier<TelegramUpdateEventListener> constructorSupplier = () -> new TelegramUpdateEventListener(
                 redisUserStateService, mockedUpdateHandlers, new ArrayList<>(),
                 emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender
-        ));
+        );
+        assertThrows(HandlerTypeNotFoundException.class, constructorSupplier::get);
     }
 
     @Test
@@ -114,10 +125,11 @@ class TelegramUpdateEventListenerTest {
         mockedStateHandlers.add(updateHandlerWithNonNullUpdateType);
         mockedStateHandlers.add(updateHandlerWithNullUpdateType);
 
-        assertThrows(HandlerTypeNotFoundException.class, () -> new TelegramUpdateEventListener(
+        Supplier<TelegramUpdateEventListener> constructorSupplier = () -> new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), mockedStateHandlers,
                 emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender
-        ));
+        );
+        assertThrows(HandlerTypeNotFoundException.class, constructorSupplier::get);
     }
 
     @Test
@@ -444,7 +456,7 @@ class TelegramUpdateEventListenerTest {
         Message message = new Message();
         Chat chat = new Chat();
         chat.setId(chatId);
-        chat.setType("group");
+        chat.setType("private");
         message.setChat(chat);
         update.setChannelPost(message);
         listener.update(new TelegramUpdateEvent(new Object(), update));

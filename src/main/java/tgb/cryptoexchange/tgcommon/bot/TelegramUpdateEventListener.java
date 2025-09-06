@@ -124,27 +124,35 @@ public class TelegramUpdateEventListener {
                 if (handleState(update, updateType, chatId))
                     return;
                 if (!handle(update, updateType)) {
-                    Chat chat = UpdateType.getChat(update);
-                    if (Objects.nonNull(chat) && Boolean.TRUE.equals(chat.isUserChat())) {
-                        BotApiMethodMessage message = emptyHandler.getEmptyMessage(UpdateType.getChatId(update));
-                        if (Objects.nonNull(message)) {
-                            responseSender.execute(message);
-                        }
-                    }
+                    sendNoHandler(update);
                 }
             }
         } catch (Exception e) {
-            Long time = System.currentTimeMillis();
-            log.error("{} Необработанная ошибка.", time, e);
-            responseSender.sendMessage(chatId,
-                    "Произошла ошибка." + System.lineSeparator() + time + System.lineSeparator()
-                            + "Введите /start для выхода в главное меню."
-            );
+            sendErrorResponse(e, chatId);
         } finally {
             if (lockAcquired) {
                 lock.unlock();
             }
         }
+    }
+
+    private void sendNoHandler(Update update) {
+        Chat chat = UpdateType.getChat(update);
+        if (Objects.nonNull(chat) && Boolean.TRUE.equals(chat.isUserChat())) {
+            BotApiMethodMessage message = emptyHandler.getEmptyMessage(UpdateType.getChatId(update));
+            if (Objects.nonNull(message)) {
+                responseSender.execute(message);
+            }
+        }
+    }
+
+    private void sendErrorResponse(Exception e, Long chatId) {
+        Long time = System.currentTimeMillis();
+        log.error("{} Необработанная ошибка.", time, e);
+        responseSender.sendMessage(chatId,
+                "Произошла ошибка." + System.lineSeparator() + time + System.lineSeparator()
+                        + "Введите /start для выхода в главное меню."
+        );
     }
 
     private boolean preHandle(Update update, Long chatId) {

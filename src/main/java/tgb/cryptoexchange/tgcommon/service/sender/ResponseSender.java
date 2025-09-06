@@ -1,19 +1,14 @@
 package tgb.cryptoexchange.tgcommon.service.sender;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
-import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage;
 import org.telegram.telegrambots.meta.api.methods.send.*;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.*;
-import org.telegram.telegrambots.meta.api.objects.Document;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputTextMessageContent;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultArticle;
 import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
@@ -22,17 +17,11 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.cryptoexchange.tgcommon.bot.BotInstance;
-import tgb.cryptoexchange.tgcommon.constants.UpdateType;
-import tgb.cryptoexchange.tgcommon.exception.TelegramCommonException;
 import tgb.cryptoexchange.tgcommon.keyboard.InlineButton;
 import tgb.cryptoexchange.tgcommon.keyboard.KeyboardBuilder;
 import tgb.cryptoexchange.tgcommon.keyboard.ReplyButton;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,12 +34,10 @@ public class ResponseSender {
 
     private final BotInstance bot;
     private final KeyboardBuilder keyboardBuildService;
-    private final String botToken;
 
-    public ResponseSender(BotInstance bot, KeyboardBuilder keyboardBuildService, @Value("${bot.token}") String botToken) {
+    public ResponseSender(BotInstance bot, KeyboardBuilder keyboardBuildService) {
         this.bot = bot;
         this.keyboardBuildService = keyboardBuildService;
-        this.botToken = botToken;
     }
 
     /**
