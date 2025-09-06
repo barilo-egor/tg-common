@@ -13,6 +13,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.payments.PreCheckoutQuery;
 import tgb.cryptoexchange.tgcommon.constants.UpdateType;
 import tgb.cryptoexchange.tgcommon.constants.UserState;
 import tgb.cryptoexchange.tgcommon.exception.HandlerTypeNotFoundException;
@@ -404,6 +406,49 @@ class TelegramUpdateEventListenerTest {
         listener.update(event);
         verify(emptyHandler).getEmptyMessage(chatId);
         verify(responseSender, times(0)).execute(any());
+    }
+
+    @Test
+    @DisplayName("update(TelegramUpdateEvent event) - отсутствует chat в апдейте - без ответа")
+    void shouldSkipIfNoChatInUpdate() {
+        when(bannedCacheProvider.getIfAvailable()).thenReturn(bannedCache);
+        when(antiSpamProvider.getIfAvailable()).thenReturn(antiSpam);
+
+        TelegramUpdateEventListener listener = new TelegramUpdateEventListener(
+                redisUserStateService, new ArrayList<>(), new ArrayList<>(),
+                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender
+        );
+        long chatId = 123456789L;
+        Update update = new Update();
+        PreCheckoutQuery preCheckoutQuery = new PreCheckoutQuery();
+        User user = new User();
+        user.setId(chatId);
+        preCheckoutQuery.setFrom(user);
+        update.setPreCheckoutQuery(preCheckoutQuery);
+        listener.update(new TelegramUpdateEvent(new Object(), update));
+        verify(emptyHandler, times(0)).getEmptyMessage(chatId);
+    }
+
+    @Test
+    @DisplayName("update(TelegramUpdateEvent event) - chat не является private - без ответа")
+    void shouldSkipIfNotPrivateChatInUpdate() {
+        when(bannedCacheProvider.getIfAvailable()).thenReturn(bannedCache);
+        when(antiSpamProvider.getIfAvailable()).thenReturn(antiSpam);
+
+        TelegramUpdateEventListener listener = new TelegramUpdateEventListener(
+                redisUserStateService, new ArrayList<>(), new ArrayList<>(),
+                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender
+        );
+        long chatId = 123456789L;
+        Update update = new Update();
+        Message message = new Message();
+        Chat chat = new Chat();
+        chat.setId(chatId);
+        chat.setType("group");
+        message.setChat(chat);
+        update.setChannelPost(message);
+        listener.update(new TelegramUpdateEvent(new Object(), update));
+        verify(emptyHandler, times(0)).getEmptyMessage(chatId);
     }
 
     @Test
