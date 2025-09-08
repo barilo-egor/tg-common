@@ -10,7 +10,6 @@ import tgb.cryptoexchange.tgcommon.handler.TextHandler;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @Service
 public class TextMessageHandler implements MessageHandler {
@@ -25,12 +24,9 @@ public class TextMessageHandler implements MessageHandler {
 
     @Override
     public boolean handleMessage(Message message) {
-        TextMessageType textMessageType = TextMessageType.fromString(message.getText());
-        if (Objects.nonNull(textMessageType)) {
-            TextHandler textMessageHandler = textMessageHandlersMap.get(textMessageType);
-            if (textMessageHandler != null) {
-                return textMessageHandler.handle(message);
-            }
+        TextHandler textMessageHandler = textMessageHandlersMap.get(TextMessageType.fromString(message.getText()));
+        if (textMessageHandler != null) {
+            return textMessageHandler.handle(message);
         }
         return false;
     }
