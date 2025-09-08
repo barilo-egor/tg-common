@@ -89,7 +89,7 @@ class TextCommandsHandlerTest {
     }
 
     @Test
-    @DisplayName("getTextMessageType() - вызов - возвращен TextMessageType.SLASH_COMMAND")
+    @DisplayName("getTextMessageType() - вызов - возвращен TextMessageType.TEXT_COMMAND")
     void shouldReturnSLASH_COMMAND() {
         assertEquals(TextMessageType.TEXT_COMMAND, new TextCommandsHandler(new ArrayList<>()).getTextMessageType());
     }
