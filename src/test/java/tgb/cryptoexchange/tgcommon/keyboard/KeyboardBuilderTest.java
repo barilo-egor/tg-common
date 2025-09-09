@@ -25,6 +25,7 @@ class KeyboardBuilderTest {
 
     @ParameterizedTest
     @ValueSource(ints = {1, 2, 10})
+    @DisplayName("buildInline(List<InlineButton> buttons) - вызов с передачей кнопок - должен создать клавиатуру с одной колонкой")
     void buildInlineShouldCreateKeyboardWithOneColumn(int numberOfButtons) {
         List<InlineButton> buttons = new ArrayList<>(numberOfButtons);
         for (int i = 0; i < numberOfButtons; i++) {
@@ -36,6 +37,8 @@ class KeyboardBuilderTest {
 
     @ParameterizedTest
     @ValueSource(ints = {0, -1})
+    @DisplayName("buildInline(int maxNumberOfColumns, List<InlineButton> buttons) - вызов с передачей кнопок и количества колонок " +
+            "- должен создать клавиатуру с переданным в параметре количеством колонок")
     void shouldThrowTelegramCommonExceptionIfNotValidMaxNumberOfColumns(int maxNumberOfColumns) {
         Executable executable = () -> keyboardBuilder.buildInline(
                 maxNumberOfColumns,
@@ -45,12 +48,14 @@ class KeyboardBuilderTest {
     }
 
     @Test
+    @DisplayName("buildInline(int maxNumberOfColumns, List<InlineButton> buttons) - вызов с пустым список кнопок - проброшен TelegramCommonException")
     void buildInlineShouldThrowTelegramCommonExceptionIfEmptyButtons() {
         Executable executable = () -> keyboardBuilder.buildInline(2, new ArrayList<>());
         assertThrows(TelegramCommonException.class, executable);
     }
 
     @Test
+    @DisplayName("buildInline(int maxNumberOfColumns, List<InlineButton> buttons) - вызов с null списком - проброшен TelegramCommonException")
     void buildInlineShouldThrowTelegramCommonExceptionIfNullButtons() {
         Executable executable = () -> keyboardBuilder.buildInline(2, null);
         assertThrows(TelegramCommonException.class, executable);
@@ -64,6 +69,8 @@ class KeyboardBuilderTest {
             "3,2,2",
             "8,1,8"
     })
+    @DisplayName("buildInline(int maxNumberOfColumns, List<InlineButton> buttons) - вызов с передачей кол-ва колонок и кнопок " +
+            "- количество строк равно кол-во кнопок/кол-во колонок")
     void buildInlineShouldCreateKeyboardWithPassedParameterNumberOfColumns(int numberOfButtons, int maxNumberOfColumns, int expectedRowsNumber) {
         List<InlineButton> buttons = new ArrayList<>();
         for (int i = 0; i < numberOfButtons; i++) {
@@ -76,6 +83,8 @@ class KeyboardBuilderTest {
 
     @ParameterizedTest
     @ValueSource(ints = {1, 4, 6})
+    @DisplayName("buildInlineByRows(List<List<InlineButton>> rows) - передано произвольное количество строк " +
+            "- кол-во строк в готовой клавиатуре совпадает с переданным")
     void buildInlineByRowsShouldCreatePassedNumberOfRows(int numberOfRows) {
         List<List<InlineButton>> rows = new ArrayList<>();
         for (int i = 0; i < numberOfRows; i++) {
@@ -94,7 +103,9 @@ class KeyboardBuilderTest {
             "3,2,1",
             "4,2,5"
     })
-    void buildInlineByRowsShouldCreatePassedNumberOfRows(int firstRowButtonsNumber, int secondRowButtonsNumber, int thirdRowButtonsNumber) {
+    @DisplayName("buildInlineByRows(List<List<InlineButton>> rows) - вызов с произольным кол-вом кнопок в строках " +
+            "- кол-во кнопок в строках в готовой клавиатуре совпадает с переданными строками")
+    void buildInlineByRowsShouldCreatePassedNumberOfButtonsInRows(int firstRowButtonsNumber, int secondRowButtonsNumber, int thirdRowButtonsNumber) {
         List<List<InlineButton>> rows = new ArrayList<>();
         List<InlineButton> row1 = new ArrayList<>();
         for (int i = 0; i < firstRowButtonsNumber; i++) {
@@ -123,6 +134,8 @@ class KeyboardBuilderTest {
     }
 
     @Test
+    @DisplayName("buildInline(int maxNumberOfColumns, List<InlineButton> buttons) - вызов с произвольными InlineType " +
+            "- готовые кнопки должны иметь данные в зависимости от типа")
     void buildInlineShouldParseButtonByInlineType() {
         List<InlineButton> buttons = new ArrayList<>();
         String url = "https://example.com";
@@ -151,6 +164,8 @@ class KeyboardBuilderTest {
 
     @ParameterizedTest
     @ValueSource(ints = {1, 2, 10})
+    @DisplayName("buildReply(List<ReplyButton> buttons) - вызов с передачей только кнопок " +
+            "- создана клавиатура с нужным количеством строк и oneTime==false и resize==true")
     void buildReplyShouldCreateKeyboardWithOneColumnNotOneTimeAndResize(int numberOfButtons) {
         List<ReplyButton> buttons = new ArrayList<>(numberOfButtons);
         for (int i = 0; i < numberOfButtons; i++) {
@@ -171,6 +186,8 @@ class KeyboardBuilderTest {
             "5,2",
             "3,1"
     })
+    @DisplayName("buildReply(int maxNumberOfColumns, List<ReplyButton> buttons) - вызов с передачей кнопок и количества колонок " +
+            "- создана клавиатура с oneTime==false и resize==true")
     void buildReplyShouldCreateKeyboardNotOneTimeAndResize(int maxNumberOfColumns, int numberOfButtons) {
         List<ReplyButton> buttons = new ArrayList<>(numberOfButtons);
         for (int i = 0; i < numberOfButtons; i++) {
@@ -184,6 +201,8 @@ class KeyboardBuilderTest {
     }
 
     @Test
+    @DisplayName("buildReply(int maxNumberOfColumns, List<ReplyButton> buttons) - вызов с передачей кнопок, количества колонок и oneTime " +
+            "- создана клавиатура с resize==true")
     void buildReplyShouldCreateKeyboardWithResize() {
         ReplyKeyboardMarkup actualKeyboard = keyboardBuilder.buildReply(2,
                 List.of(ReplyButton.builder().text("some text").build()), true);
@@ -229,6 +248,9 @@ class KeyboardBuilderTest {
             "3,2,2",
             "8,1,8"
     })
+    @DisplayName("buildReply(int maxNumberOfColumns, boolean oneTime, boolean resize, List<ReplyButton> buttons) " +
+            "- вызов с передачей кнопок " +
+            "- создана клавиатура с правильным кол-вом строк")
     void buildReplyShouldCreateKeyboardWithPassedParameterNumberOfColumns(int numberOfButtons, int maxNumberOfColumns, int expectedRowsNumber) {
         List<ReplyButton> buttons = new ArrayList<>();
         for (int i = 0; i < numberOfButtons; i++) {
@@ -241,6 +263,9 @@ class KeyboardBuilderTest {
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
+    @DisplayName("buildReply(int maxNumberOfColumns, boolean oneTime, boolean resize, List<ReplyButton> buttons) " +
+            "- вызов с произовльным oneTime " +
+            "- создана клавиатура с требуемым oneTime")
     void buildReplyShouldCreateWithPassedParameterOneTime(boolean oneTime) {
         List<ReplyButton> buttons = new ArrayList<>();
         buttons.add(new ReplyButton("text 1", false, false));
@@ -252,6 +277,9 @@ class KeyboardBuilderTest {
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
+    @DisplayName("buildReply(int maxNumberOfColumns, boolean oneTime, boolean resize, List<ReplyButton> buttons) " +
+            "- вызов с произовльным resize " +
+            "- создана клавиатура с требуемым resize")
     void buildReplyShouldCreateWithPassedParameterResize(boolean resize) {
         List<ReplyButton> buttons = new ArrayList<>();
         buttons.add(new ReplyButton("text 1", false, false));
@@ -262,6 +290,9 @@ class KeyboardBuilderTest {
     }
 
     @Test
+    @DisplayName("buildReply(int maxNumberOfColumns, boolean oneTime, boolean resize, List<ReplyButton> buttons) " +
+            "- вызов с произовльным requestContact у кнопки " +
+            "- создана клавиатура с требуемым requestContact у кнопки")
     void buildReplyShouldCreateWithPassedRequestContact() {
         List<ReplyButton> buttons = new ArrayList<>();
         buttons.add(new ReplyButton("text 1", false, false));
@@ -274,6 +305,9 @@ class KeyboardBuilderTest {
     }
 
     @Test
+    @DisplayName("buildReply(int maxNumberOfColumns, boolean oneTime, boolean resize, List<ReplyButton> buttons) " +
+            "- вызов с произовльным requestLocation у кнопки " +
+            "- создана клавиатура с требуемым requestLocation у кнопки")
     void buildReplyShouldCreateWithPassedRequestLocation() {
         List<ReplyButton> buttons = new ArrayList<>();
         buttons.add(new ReplyButton("text 1", false, true));
