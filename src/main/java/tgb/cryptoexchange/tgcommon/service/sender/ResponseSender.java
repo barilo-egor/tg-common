@@ -1,5 +1,6 @@
 package tgb.cryptoexchange.tgcommon.service.sender;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
@@ -111,6 +112,10 @@ public class ResponseSender {
         return sendMessage(chatId, text, keyboardBuildService.buildInline(inlineButtons), null);
     }
 
+    public Optional<Message> sendMessage(@NonNull Long chatId, @NonNull String text, ReplyKeyboard replyKeyboard, Integer replyToMessageId) {
+        return sendMessage(chatId, text, replyKeyboard, replyToMessageId, "html");
+    }
+
     /**
      * Отправка текстового сообщения пользователю
      *
@@ -120,25 +125,21 @@ public class ResponseSender {
      * @param replyToMessageId идентификатор сообщения на которое будет сделан ответ
      * @return сообщение, если оно было успешно доставлено
      */
-    public Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard, Integer replyToMessageId) {
+    public Optional<Message> sendMessage(@NonNull Long chatId, @NonNull String text, ReplyKeyboard replyKeyboard,
+                                         Integer replyToMessageId, String parseMode) {
         SendMessage sendMessage = SendMessage.builder()
                 .chatId(chatId.toString())
                 .text(text)
                 .replyToMessageId(replyToMessageId)
                 .replyMarkup(replyKeyboard)
-                .parseMode("html")
+                .parseMode(parseMode)
                 .build();
-        return Optional.ofNullable(executeSendMessage(sendMessage));
-    }
-
-    private Message executeSendMessage(SendMessage sendMessage) {
         try {
-            sendMessage.setParseMode("html");
-            return bot.execute(sendMessage);
+            return Optional.of(bot.execute(sendMessage));
         } catch (TelegramApiException e) {
             log.error("Ошибка отправки sendMessage: ", e);
-            return null;
         }
+        return Optional.empty();
     }
 
     /**
