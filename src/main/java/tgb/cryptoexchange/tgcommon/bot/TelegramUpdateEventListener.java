@@ -14,7 +14,7 @@ import tgb.cryptoexchange.tgcommon.exception.HandlerTypeNotFoundException;
 import tgb.cryptoexchange.tgcommon.exception.TelegramCommonException;
 import tgb.cryptoexchange.tgcommon.handler.*;
 import tgb.cryptoexchange.tgcommon.service.RedisUserStateService;
-import tgb.cryptoexchange.tgcommon.service.sender.ResponseSender;
+import tgb.cryptoexchange.tgcommon.service.sender.OldResponseSender;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,12 +44,12 @@ public class TelegramUpdateEventListener {
 
     private final BannedCache bannedCache;
 
-    private final ResponseSender responseSender;
+    private final OldResponseSender oldResponseSender;
 
     public TelegramUpdateEventListener(RedisUserStateService redisUserStateService, List<UpdateHandler> updateHandlers,
                                        List<StateHandler> stateHandlers, EmptyHandler emptyHandler,
                                        List<UpdateFilter> updateFilters, ObjectProvider<AntiSpam> antiSpam,
-                                       ObjectProvider<BannedCache> bannedCache, ResponseSender responseSender) {
+                                       ObjectProvider<BannedCache> bannedCache, OldResponseSender oldResponseSender) {
         this.redisUserStateService = redisUserStateService;
         this.emptyHandler = emptyHandler;
         this.antiSpam = antiSpam.getIfAvailable();
@@ -60,7 +60,7 @@ public class TelegramUpdateEventListener {
         if (Objects.isNull(this.bannedCache)) {
             throw new TelegramCommonException("Отсутствует реализация интерфейса BannedCache");
         }
-        this.responseSender = responseSender;
+        this.oldResponseSender = oldResponseSender;
         log.debug("Загрузка обработчиков апдейтов.");
         this.updateHandlers = new EnumMap<>(UpdateType.class);
         for (UpdateHandler updateHandler : updateHandlers) {
@@ -141,7 +141,7 @@ public class TelegramUpdateEventListener {
         if (Objects.nonNull(chat) && Boolean.TRUE.equals(chat.isUserChat())) {
             BotApiMethodMessage message = emptyHandler.getEmptyMessage(UpdateType.getChatId(update));
             if (Objects.nonNull(message)) {
-                responseSender.execute(message);
+                oldResponseSender.execute(message);
             }
         }
     }
@@ -149,7 +149,7 @@ public class TelegramUpdateEventListener {
     private void sendErrorResponse(Exception e, Long chatId) {
         Long time = System.currentTimeMillis();
         log.error("{} Необработанная ошибка.", time, e);
-        responseSender.sendMessage(chatId,
+        oldResponseSender.sendMessage(chatId,
                 "Произошла ошибка." + System.lineSeparator() + time + System.lineSeparator()
                         + "Введите /start для выхода в главное меню."
         );
