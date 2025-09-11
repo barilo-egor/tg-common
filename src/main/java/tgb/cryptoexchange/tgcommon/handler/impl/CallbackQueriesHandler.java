@@ -7,10 +7,7 @@ import tgb.cryptoexchange.tgcommon.handler.CallbackQueryHandler;
 import tgb.cryptoexchange.tgcommon.handler.UpdateHandler;
 import tgb.cryptoexchange.tgcommon.keyboard.PressedInlineButton;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class CallbackQueriesHandler implements UpdateHandler {
@@ -26,7 +23,11 @@ public class CallbackQueriesHandler implements UpdateHandler {
     @Override
     public boolean handle(Update update) {
         var pressedButton = PressedInlineButton.build(update.getCallbackQuery());
-        CallbackQueryHandler callbackQueryHandler = callbackQueryHandlerMap.get(pressedButton.getArgument(0));
+        Optional<String> maybeId = pressedButton.getArgument(0);
+        if (maybeId.isEmpty()) {
+            return false;
+        }
+        CallbackQueryHandler callbackQueryHandler = callbackQueryHandlerMap.get(maybeId.get());
         if (Objects.isNull(callbackQueryHandler) || !callbackQueryHandler.hasAccess(update.getCallbackQuery().getMessage().getChatId())) {
             return false;
         }
