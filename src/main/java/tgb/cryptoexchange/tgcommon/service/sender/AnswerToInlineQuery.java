@@ -3,13 +3,14 @@ package tgb.cryptoexchange.tgcommon.service.sender;
 import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputTextMessageContent;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultArticle;
+import tgb.cryptoexchange.tgcommon.bot.MethodExecutor;
 import tgb.cryptoexchange.tgcommon.constants.ParseMode;
 
 import java.util.Objects;
 
 public class AnswerToInlineQuery {
 
-    private final ResponseSender responseSender;
+    private final MethodExecutor methodExecutor;
 
     private final Integer inlineQueryId;
 
@@ -21,8 +22,8 @@ public class AnswerToInlineQuery {
 
     private String description;
 
-    public AnswerToInlineQuery(ResponseSender responseSender, Integer inlineQueryId) {
-        this.responseSender = responseSender;
+    public AnswerToInlineQuery(MethodExecutor methodExecutor, Integer inlineQueryId) {
+        this.methodExecutor = methodExecutor;
         this.inlineQueryId = inlineQueryId;
     }
 
@@ -47,7 +48,7 @@ public class AnswerToInlineQuery {
     }
 
     public void send() {
-        responseSender.send(AnswerInlineQuery.builder()
+        methodExecutor.send(AnswerInlineQuery.builder()
                 .inlineQueryId(inlineQueryId.toString())
                 .result(InlineQueryResultArticle.builder()
                         .id(inlineQueryId.toString())

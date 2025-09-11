@@ -4,6 +4,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import tgb.cryptoexchange.tgcommon.bot.MethodExecutor;
 import tgb.cryptoexchange.tgcommon.constants.ParseMode;
 
 import java.util.Objects;
@@ -11,8 +12,8 @@ import java.util.Optional;
 
 public class DocumentMessage extends InputFileMessage<DocumentMessage> {
 
-    public DocumentMessage(ResponseSender responseSender, Long chatId, InputFile photo) {
-        super(responseSender, chatId, photo);
+    public DocumentMessage(MethodExecutor methodExecutor, Long chatId, InputFile photo) {
+        super(methodExecutor, chatId, photo);
     }
 
     public DocumentMessage caption(String caption) {
@@ -38,7 +39,7 @@ public class DocumentMessage extends InputFileMessage<DocumentMessage> {
 
     @Override
     public Optional<Message> send() {
-        return responseSender.send(
+        return methodExecutor.send(
                 SendDocument.builder()
                         .chatId(chatId)
                         .document(inputFile)

@@ -3,6 +3,7 @@ package tgb.cryptoexchange.tgcommon.service.sender;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import tgb.cryptoexchange.tgcommon.bot.MethodExecutor;
 import tgb.cryptoexchange.tgcommon.constants.ParseMode;
 
 import java.util.Objects;
@@ -10,7 +11,7 @@ import java.util.Optional;
 
 public class TextMessage {
 
-    protected final ResponseSender responseSender;
+    protected final MethodExecutor methodExecutor;
 
     protected final Long chatId;
 
@@ -22,8 +23,8 @@ public class TextMessage {
 
     protected ParseMode parseMode;
 
-    public TextMessage(ResponseSender responseSender, Long chatId, String text) {
-        this.responseSender = responseSender;
+    public TextMessage(MethodExecutor methodExecutor, Long chatId, String text) {
+        this.methodExecutor = methodExecutor;
         this.chatId = chatId;
         this.text = text;
     }
@@ -44,7 +45,7 @@ public class TextMessage {
     }
 
     public Optional<Message> send() {
-        return responseSender.send(
+        return methodExecutor.send(
                 SendMessage.builder()
                         .chatId(chatId)
                         .text(text)

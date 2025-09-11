@@ -4,6 +4,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import tgb.cryptoexchange.tgcommon.bot.MethodExecutor;
 import tgb.cryptoexchange.tgcommon.constants.ParseMode;
 
 import java.util.Objects;
@@ -11,8 +12,8 @@ import java.util.Optional;
 
 public class VideoMessage extends InputFileMessage<VideoMessage> {
 
-    public VideoMessage(ResponseSender responseSender, Long chatId, InputFile inputFile) {
-        super(responseSender, chatId, inputFile);
+    public VideoMessage(MethodExecutor methodExecutor, Long chatId, InputFile inputFile) {
+        super(methodExecutor, chatId, inputFile);
     }
 
     @Override
@@ -41,7 +42,7 @@ public class VideoMessage extends InputFileMessage<VideoMessage> {
 
     @Override
     public Optional<Message> send() {
-        return responseSender.send(
+        return methodExecutor.send(
                 SendVideo.builder()
                         .chatId(chatId)
                         .video(inputFile)

@@ -2,13 +2,14 @@ package tgb.cryptoexchange.tgcommon.service.sender;
 
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import tgb.cryptoexchange.tgcommon.bot.MethodExecutor;
 import tgb.cryptoexchange.tgcommon.constants.ParseMode;
 
 import java.util.Objects;
 
 public class EditTextMessage {
 
-    protected final ResponseSender responseSender;
+    protected final MethodExecutor methodExecutor;
 
     protected final Long chatId;
 
@@ -20,8 +21,8 @@ public class EditTextMessage {
 
     protected ParseMode parseMode;
 
-    public EditTextMessage(ResponseSender responseSender, Long chatId, String text) {
-        this.responseSender = responseSender;
+    public EditTextMessage(MethodExecutor methodExecutor, Long chatId, String text) {
+        this.methodExecutor = methodExecutor;
         this.chatId = chatId;
         this.text = text;
     }
@@ -42,7 +43,7 @@ public class EditTextMessage {
     }
 
     public void send() {
-        responseSender.send(
+        methodExecutor.send(
                 EditMessageText.builder()
                         .chatId(chatId)
                         .text(text)

@@ -1,15 +1,17 @@
 package tgb.cryptoexchange.tgcommon.service.sender;
 
+import tgb.cryptoexchange.tgcommon.bot.MethodExecutor;
+
 public class DeleteMessage {
 
-    private final ResponseSender responseSender;
+    private final MethodExecutor methodExecutor;
 
     private final Long chatId;
 
     private Integer messageId;
 
-    public DeleteMessage(ResponseSender responseSender, Long chatId) {
-        this.responseSender = responseSender;
+    public DeleteMessage(MethodExecutor methodExecutor, Long chatId) {
+        this.methodExecutor = methodExecutor;
         this.chatId = chatId;
     }
 
@@ -19,7 +21,7 @@ public class DeleteMessage {
     }
 
     public void delete() {
-        responseSender.send(org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage.builder()
+        methodExecutor.send(org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage.builder()
                 .chatId(chatId)
                 .messageId(messageId)
                 .build()
