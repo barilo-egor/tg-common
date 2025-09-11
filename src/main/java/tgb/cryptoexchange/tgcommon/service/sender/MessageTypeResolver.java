@@ -34,6 +34,10 @@ public class MessageTypeResolver {
         return new DocumentMessage(methodExecutor, chatId, document);
     }
 
+    public VideoMessage video(InputFile video) {
+        return new VideoMessage(methodExecutor, chatId, video);
+    }
+
     public MediaGroupMessage mediaGroup(List<InputMedia> inputMedia) {
         return new MediaGroupMessage(methodExecutor, chatId, inputMedia);
     }
@@ -46,7 +50,7 @@ public class MessageTypeResolver {
         return new EditMessageReplyKeyboard(methodExecutor, chatId, messageId, replyKeyboard);
     }
 
-    public DeleteMessage delete(Long chatId, Integer messageId) {
+    public DeleteMessage delete(Integer messageId) {
         return new DeleteMessage(methodExecutor, chatId, messageId);
     }
 }
