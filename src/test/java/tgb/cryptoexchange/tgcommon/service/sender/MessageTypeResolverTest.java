@@ -125,13 +125,14 @@ class MessageTypeResolverTest {
         for (String fileId : fileIds) {
             inputMedia.add(new InputMediaPhoto(fileId));
         }
-        MediaGroupMessage mediaGroupMessage = messageTypeResolver.mediaGroup(inputMedia);
-        mediaGroupMessage.send();
+        Integer expectedReplyMessageId = 123532;
+        messageTypeResolver.mediaGroup(inputMedia).replyToMessageId(expectedReplyMessageId).send();
         ArgumentCaptor<SendMediaGroup> sendMediaGroupArgumentCaptor = ArgumentCaptor.forClass(SendMediaGroup.class);
         verify(methodExecutor).execute(sendMediaGroupArgumentCaptor.capture());
         assertAll(
                 () -> assertEquals(fileIds.size(), sendMediaGroupArgumentCaptor.getValue().getMedias().size()),
-                () -> assertEquals(inputMedia, sendMediaGroupArgumentCaptor.getValue().getMedias())
+                () -> assertEquals(inputMedia, sendMediaGroupArgumentCaptor.getValue().getMedias()),
+                () -> assertEquals(expectedReplyMessageId, sendMediaGroupArgumentCaptor.getValue().getReplyToMessageId())
         );
     }
 
