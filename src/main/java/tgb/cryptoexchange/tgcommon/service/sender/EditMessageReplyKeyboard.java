@@ -22,6 +22,12 @@ public class EditMessageReplyKeyboard {
     }
 
     public void send() {
-        methodExecutor.execute(EditMessageReplyMarkup.builder().chatId(chatId).messageId(messageId).replyMarkup(replyKeyboard).build());
+        methodExecutor.execute(
+                EditMessageReplyMarkup.builder()
+                        .chatId(chatId)
+                        .messageId(messageId)
+                        .replyMarkup(replyKeyboard)
+                        .build()
+        );
     }
 }
