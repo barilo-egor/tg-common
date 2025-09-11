@@ -14,7 +14,7 @@ import tgb.cryptoexchange.tgcommon.exception.HandlerTypeNotFoundException;
 import tgb.cryptoexchange.tgcommon.exception.TelegramCommonException;
 import tgb.cryptoexchange.tgcommon.handler.*;
 import tgb.cryptoexchange.tgcommon.service.RedisUserStateService;
-import tgb.cryptoexchange.tgcommon.service.sender.OldResponseSender;
+import tgb.cryptoexchange.tgcommon.service.sender.ResponseSender;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,15 +44,19 @@ public class TelegramUpdateEventListener {
 
     private final BannedCache bannedCache;
 
-    private final OldResponseSender oldResponseSender;
+    private final ResponseSender responseSender;
+
+    private final MethodExecutor methodExecutor;
 
     public TelegramUpdateEventListener(RedisUserStateService redisUserStateService, List<UpdateHandler> updateHandlers,
                                        List<StateHandler> stateHandlers, EmptyHandler emptyHandler,
                                        List<UpdateFilter> updateFilters, ObjectProvider<AntiSpam> antiSpam,
-                                       ObjectProvider<BannedCache> bannedCache, OldResponseSender oldResponseSender) {
+                                       ObjectProvider<BannedCache> bannedCache, ResponseSender responseSender,
+                                       MethodExecutor methodExecutor) {
         this.redisUserStateService = redisUserStateService;
         this.emptyHandler = emptyHandler;
         this.antiSpam = antiSpam.getIfAvailable();
+        this.methodExecutor = methodExecutor;
         if (Objects.isNull(this.antiSpam)) {
             throw new TelegramCommonException("Отсутствует реализация интерфейса AntiSpam");
         }
@@ -60,7 +64,7 @@ public class TelegramUpdateEventListener {
         if (Objects.isNull(this.bannedCache)) {
             throw new TelegramCommonException("Отсутствует реализация интерфейса BannedCache");
         }
-        this.oldResponseSender = oldResponseSender;
+        this.responseSender = responseSender;
         log.debug("Загрузка обработчиков апдейтов.");
         this.updateHandlers = new EnumMap<>(UpdateType.class);
         for (UpdateHandler updateHandler : updateHandlers) {
@@ -103,6 +107,7 @@ public class TelegramUpdateEventListener {
      * и выполняется поиск обработчика для данного типа, после чего найденному обработчику передается обработка апдейта.<br>
      * 6. Если обработчик найден не был, получается объект сообщения из реализации
      * {@link EmptyHandler#getEmptyMessage(Long)} и выполняется его отправка.
+     *
      * @param event ивент с телеграм-апдейтом
      */
     @EventListener
@@ -141,7 +146,7 @@ public class TelegramUpdateEventListener {
         if (Objects.nonNull(chat) && Boolean.TRUE.equals(chat.isUserChat())) {
             BotApiMethodMessage message = emptyHandler.getEmptyMessage(UpdateType.getChatId(update));
             if (Objects.nonNull(message)) {
-                oldResponseSender.execute(message);
+                methodExecutor.execute(message);
             }
         }
     }
@@ -149,10 +154,11 @@ public class TelegramUpdateEventListener {
     private void sendErrorResponse(Exception e, Long chatId) {
         Long time = System.currentTimeMillis();
         log.error("{} Необработанная ошибка.", time, e);
-        oldResponseSender.sendMessage(chatId,
-                "Произошла ошибка." + System.lineSeparator() + time + System.lineSeparator()
-                        + "Введите /start для выхода в главное меню."
-        );
+        responseSender.to(chatId)
+                .message(
+                        "Произошла ошибка." + System.lineSeparator() + time + System.lineSeparator()
+                                + "Введите /start для выхода в главное меню."
+                ).send();
     }
 
     private boolean preHandle(Update update, Long chatId) {

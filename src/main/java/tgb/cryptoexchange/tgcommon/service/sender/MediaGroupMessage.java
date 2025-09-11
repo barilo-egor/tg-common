@@ -28,7 +28,7 @@ public class MediaGroupMessage {
     }
 
     public void send() {
-        methodExecutor.send(
+        methodExecutor.execute(
                 SendMediaGroup.builder()
                         .chatId(chatId)
                         .medias(media)

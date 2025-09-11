@@ -39,7 +39,7 @@ public class DocumentMessage extends InputFileMessage<DocumentMessage> {
 
     @Override
     public Optional<Message> send() {
-        return methodExecutor.send(
+        return methodExecutor.execute(
                 SendDocument.builder()
                         .chatId(chatId)
                         .document(inputFile)

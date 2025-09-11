@@ -40,7 +40,7 @@ public class PhotoMessage extends InputFileMessage<PhotoMessage> {
 
     @Override
     public Optional<Message> send() {
-        return methodExecutor.send(
+        return methodExecutor.execute(
                 SendPhoto.builder()
                         .chatId(chatId)
                         .photo(inputFile)

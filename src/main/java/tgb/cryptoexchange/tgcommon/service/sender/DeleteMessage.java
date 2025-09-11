@@ -21,7 +21,7 @@ public class DeleteMessage {
     }
 
     public void delete() {
-        methodExecutor.send(org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage.builder()
+        methodExecutor.execute(org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage.builder()
                 .chatId(chatId)
                 .messageId(messageId)
                 .build()

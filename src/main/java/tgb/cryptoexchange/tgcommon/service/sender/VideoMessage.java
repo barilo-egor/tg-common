@@ -42,7 +42,7 @@ public class VideoMessage extends InputFileMessage<VideoMessage> {
 
     @Override
     public Optional<Message> send() {
-        return methodExecutor.send(
+        return methodExecutor.execute(
                 SendVideo.builder()
                         .chatId(chatId)
                         .video(inputFile)

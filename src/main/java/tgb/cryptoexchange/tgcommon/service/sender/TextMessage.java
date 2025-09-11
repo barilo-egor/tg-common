@@ -45,7 +45,7 @@ public class TextMessage {
     }
 
     public Optional<Message> send() {
-        return methodExecutor.send(
+        return methodExecutor.execute(
                 SendMessage.builder()
                         .chatId(chatId)
                         .text(text)

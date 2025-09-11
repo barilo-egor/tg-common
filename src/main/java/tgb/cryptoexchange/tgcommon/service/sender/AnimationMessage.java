@@ -39,7 +39,7 @@ public class AnimationMessage extends InputFileMessage<AnimationMessage> {
 
     @Override
     public Optional<Message> send() {
-        return methodExecutor.send(
+        return methodExecutor.execute(
                 SendAnimation.builder()
                         .chatId(chatId)
                         .animation(inputFile)

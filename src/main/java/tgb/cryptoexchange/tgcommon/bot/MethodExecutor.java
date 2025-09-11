@@ -21,7 +21,7 @@ public class MethodExecutor {
         this.bot = bot;
     }
 
-    public Optional<Message> send(SendMediaBotMethod<?> sendMediaBotMethod) {
+    public Optional<Message> execute(SendMediaBotMethod<?> sendMediaBotMethod) {
         try {
             switch (sendMediaBotMethod) {
                 case SendPhoto sendPhoto -> {
@@ -39,12 +39,12 @@ public class MethodExecutor {
                 default -> throw new UnsupportedOperationException("Unexpected value: " + sendMediaBotMethod.getClass());
             }
         } catch (TelegramApiException e) {
-            log.error("Ошибка при отправке {} :", sendMediaBotMethod.toString(), e);
+            log.error("Ошибка при отправке {} :", sendMediaBotMethod, e);
             return Optional.empty();
         }
     }
 
-    public void send(BotApiMethodBoolean botApiMethodBoolean) {
+    public void execute(BotApiMethodBoolean botApiMethodBoolean) {
         try {
             bot.execute(botApiMethodBoolean);
         } catch (TelegramApiException e) {
@@ -52,7 +52,7 @@ public class MethodExecutor {
         }
     }
 
-    public void send(BotApiMethodSerializable botApiMethodSerializable) {
+    public void execute(BotApiMethodSerializable botApiMethodSerializable) {
         try {
             bot.execute(botApiMethodSerializable);
         } catch (TelegramApiException e) {
@@ -60,7 +60,7 @@ public class MethodExecutor {
         }
     }
 
-    public void send(SendMediaGroup sendMediaGroup) {
+    public void execute(SendMediaGroup sendMediaGroup) {
         try {
             bot.execute(sendMediaGroup);
         } catch (TelegramApiException e) {
@@ -68,7 +68,7 @@ public class MethodExecutor {
         }
     }
 
-    public Optional<Message> send(BotApiMethodMessage botApiMethodMessage) {
+    public Optional<Message> execute(BotApiMethodMessage botApiMethodMessage) {
         try {
             return Optional.of(bot.execute(botApiMethodMessage));
         } catch (TelegramApiException e) {

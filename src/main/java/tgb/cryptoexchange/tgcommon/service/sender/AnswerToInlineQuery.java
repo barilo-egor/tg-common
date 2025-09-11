@@ -48,7 +48,7 @@ public class AnswerToInlineQuery {
     }
 
     public void send() {
-        methodExecutor.send(AnswerInlineQuery.builder()
+        methodExecutor.execute(AnswerInlineQuery.builder()
                 .inlineQueryId(inlineQueryId.toString())
                 .result(InlineQueryResultArticle.builder()
                         .id(inlineQueryId.toString())

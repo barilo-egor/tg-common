@@ -43,7 +43,7 @@ public class EditTextMessage {
     }
 
     public void send() {
-        methodExecutor.send(
+        methodExecutor.execute(
                 EditMessageText.builder()
                         .chatId(chatId)
                         .text(text)

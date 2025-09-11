@@ -25,7 +25,7 @@ public class AnswerToCallbackQuery {
     }
 
     public void send() {
-        methodExecutor.send(
+        methodExecutor.execute(
                 AnswerCallbackQuery.builder()
                         .callbackQueryId(callbackQueryId)
                         .text(text)
