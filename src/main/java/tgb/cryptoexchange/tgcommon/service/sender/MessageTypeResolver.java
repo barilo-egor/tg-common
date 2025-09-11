@@ -45,4 +45,8 @@ public class MessageTypeResolver {
     public EditMessageReplyKeyboard editKeyboard(Integer messageId, InlineKeyboardMarkup replyKeyboard) {
         return new EditMessageReplyKeyboard(methodExecutor, chatId, messageId, replyKeyboard);
     }
+
+    public DeleteMessage delete(Long chatId, Integer messageId) {
+        return new DeleteMessage(methodExecutor, chatId, messageId);
+    }
 }

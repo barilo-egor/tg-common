@@ -8,16 +8,12 @@ public class DeleteMessage {
 
     private final Long chatId;
 
-    private Integer messageId;
+    private final Integer messageId;
 
-    public DeleteMessage(MethodExecutor methodExecutor, Long chatId) {
+    public DeleteMessage(MethodExecutor methodExecutor, Long chatId, Integer messageId) {
         this.methodExecutor = methodExecutor;
         this.chatId = chatId;
-    }
-
-    public DeleteMessage messageId(Integer messageId) {
         this.messageId = messageId;
-        return this;
     }
 
     public void delete() {

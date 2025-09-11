@@ -22,8 +22,7 @@ class DeleteMessageTest {
     })
     void shouldCreateWithPassedParameters(Long chatId, Integer messageId) {
         MethodExecutor methodExecutor = Mockito.mock(MethodExecutor.class);
-        new DeleteMessage(methodExecutor, chatId)
-                .messageId(messageId)
+        new DeleteMessage(methodExecutor, chatId, messageId)
                 .delete();
         var deleteMessageArgumentCaptor = ArgumentCaptor.forClass(org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage.class);
         verify(methodExecutor).execute(deleteMessageArgumentCaptor.capture());
