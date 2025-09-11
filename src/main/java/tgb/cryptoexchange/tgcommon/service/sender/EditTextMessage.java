@@ -9,31 +9,27 @@ import java.util.Objects;
 
 public class EditTextMessage {
 
-    protected final MethodExecutor methodExecutor;
+    private final MethodExecutor methodExecutor;
 
-    protected final Long chatId;
+    private final Long chatId;
 
-    protected final String text;
+    private final String text;
 
-    protected InlineKeyboardMarkup replyKeyboard;
+    private final Integer messageId;
 
-    protected Integer replyToMessageId;
+    private InlineKeyboardMarkup replyKeyboard;
 
-    protected ParseMode parseMode;
+    private ParseMode parseMode;
 
-    public EditTextMessage(MethodExecutor methodExecutor, Long chatId, String text) {
+    public EditTextMessage(MethodExecutor methodExecutor, Long chatId, Integer messageId, String text) {
         this.methodExecutor = methodExecutor;
         this.chatId = chatId;
+        this.messageId = messageId;
         this.text = text;
     }
 
     public EditTextMessage replyKeyboard(InlineKeyboardMarkup replyKeyboard) {
         this.replyKeyboard = replyKeyboard;
-        return this;
-    }
-
-    public EditTextMessage replyToMessageId(Integer replyToMessageId) {
-        this.replyToMessageId = replyToMessageId;
         return this;
     }
 
@@ -46,6 +42,7 @@ public class EditTextMessage {
         methodExecutor.execute(
                 EditMessageText.builder()
                         .chatId(chatId)
+                        .messageId(messageId)
                         .text(text)
                         .replyMarkup(replyKeyboard)
                         .parseMode(Objects.nonNull(parseMode) ? parseMode.getValue() : ParseMode.HTML.getValue())

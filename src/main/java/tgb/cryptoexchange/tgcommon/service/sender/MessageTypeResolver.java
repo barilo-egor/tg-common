@@ -38,8 +38,8 @@ public class MessageTypeResolver {
         return new MediaGroupMessage(methodExecutor, chatId, inputMedia);
     }
 
-    public EditTextMessage editText(String text) {
-        return new EditTextMessage(methodExecutor, chatId, text);
+    public EditTextMessage editText(Integer messageId, String text) {
+        return new EditTextMessage(methodExecutor, chatId, messageId, text);
     }
 
     public EditMessageReplyKeyboard editKeyboard(Integer messageId, InlineKeyboardMarkup replyKeyboard) {
