@@ -14,27 +14,19 @@ public class AnswerToInlineQuery {
 
     private final Integer inlineQueryId;
 
-    private String title;
+    private final String title;
 
-    private String messageText;
+    private final String messageText;
 
     private ParseMode parseMode;
 
     private String description;
 
-    public AnswerToInlineQuery(MethodExecutor methodExecutor, Integer inlineQueryId) {
+    public AnswerToInlineQuery(MethodExecutor methodExecutor, Integer inlineQueryId, String title, String messageText) {
         this.methodExecutor = methodExecutor;
         this.inlineQueryId = inlineQueryId;
-    }
-
-    public AnswerToInlineQuery title(String title) {
         this.title = title;
-        return this;
-    }
-
-    public AnswerToInlineQuery messageText(String messageText) {
         this.messageText = messageText;
-        return this;
     }
 
     public AnswerToInlineQuery parseMode(ParseMode parseMode) {

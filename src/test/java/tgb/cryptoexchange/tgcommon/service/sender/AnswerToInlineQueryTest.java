@@ -30,9 +30,7 @@ class AnswerToInlineQueryTest {
     void shouldCreateWithPassedParameters(Integer inlineQueryId, String title, String messageText,
                                           ParseMode parseMode, String description) {
         MethodExecutor methodExecutor = Mockito.mock(MethodExecutor.class);
-        new AnswerToInlineQuery(methodExecutor, inlineQueryId)
-                .title(title)
-                .messageText(messageText)
+        new AnswerToInlineQuery(methodExecutor, inlineQueryId, title, messageText)
                 .parseMode(parseMode)
                 .description(description)
                 .send();

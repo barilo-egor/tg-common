@@ -18,7 +18,7 @@ public class ResponseSender {
         return new MessageTypeResolver(methodExecutor, chatId);
     }
 
-    public AnswerToInlineQuery answerToInlineQuery(Integer inlineQueryId) {
-        return new AnswerToInlineQuery(methodExecutor, inlineQueryId);
+    public AnswerToInlineQuery answerToInlineQuery(Integer inlineQueryId, String title, String messageText) {
+        return new AnswerToInlineQuery(methodExecutor, inlineQueryId, title, messageText);
     }
 }
