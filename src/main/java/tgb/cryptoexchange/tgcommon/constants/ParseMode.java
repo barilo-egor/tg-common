@@ -11,13 +11,4 @@ public enum ParseMode {
     MARKDOWN("markdown"),;
 
     private final String value;
-
-    public static ParseMode fromValue(String value) {
-        for (ParseMode mode : ParseMode.values()) {
-            if (mode.getValue().equals(value)) {
-                return mode;
-            }
-        }
-        throw new IllegalArgumentException(value);
-    }
 }
