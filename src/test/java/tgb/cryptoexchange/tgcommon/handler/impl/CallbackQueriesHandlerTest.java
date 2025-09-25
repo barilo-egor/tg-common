@@ -1,17 +1,11 @@
 package tgb.cryptoexchange.tgcommon.handler.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -25,6 +19,7 @@ import tgb.cryptoexchange.tgcommon.keyboard.PressedInlineButton;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -32,7 +27,7 @@ import static org.mockito.Mockito.when;
 class CallbackQueriesHandlerTest {
 
     @ParameterizedTest
-    @ValueSource(strings = {"3", "4:123", "qweasd123:asdqwe"})
+    @ValueSource(strings = {"3", "4:123", "qweasd123:asdqwe", ""})
     @DisplayName("handle(Update update) - передан id на которого нет обработчика - возвращен false")
     void shouldReturnFalseIfNoHandlerForId(String callbackData) {
         CallbackQueryHandler handler1 = Mockito.mock(CallbackQueryHandler.class);

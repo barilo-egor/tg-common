@@ -57,6 +57,9 @@ public class PressedInlineButton {
      * @return значение аргумента
      */
     public Optional<String> getArgument(int index) {
+        if (data.isBlank()) {
+            return Optional.empty();
+        }
         String[] split = data.split(InlineButton.CALLBACK_DATA_SPLITTER);
         if (split.length - 1 < index) {
             return Optional.empty();
