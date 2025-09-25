@@ -22,7 +22,7 @@ public class RedisUserStateService {
 
     public RedisUserStateService(RedisTemplate<String, UserState> redisTemplate, @Value("${bot.username}") String botName) {
         this.redisTemplate = redisTemplate;
-        this.prefix = botName + ":" + "state_";
+        this.prefix = botName + ":state_";
     }
 
     /**
