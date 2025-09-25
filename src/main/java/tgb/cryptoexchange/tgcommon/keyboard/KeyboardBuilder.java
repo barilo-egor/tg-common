@@ -1,7 +1,6 @@
 package tgb.cryptoexchange.tgcommon.keyboard;
 
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -28,26 +27,22 @@ public class KeyboardBuilder {
      * @return готовую для отправки клавиатуру
      */
     public InlineKeyboardMarkup buildInline(List<InlineButton> buttons) {
-        return buildInline(buttons, 1);
+        return buildInline(1, buttons);
     }
 
     /**
      * Формирование inline клавиатуры исходя из списка кнопок и количества кнопок в ряду
-     * @param buttons inline кнопки
      * @param maxNumberOfColumns максимальное количество кнопок в ряду
+     * @param buttons inline кнопки
      * @return готовую для отправки клавиатуру
      */
-    public InlineKeyboardMarkup buildInline(List<InlineButton> buttons, int maxNumberOfColumns) {
-        return InlineKeyboardMarkup.builder()
-                .keyboard(buildInlineRows(buttons, maxNumberOfColumns))
-                .build();
-    }
-
-    private List<List<InlineKeyboardButton>> buildInlineRows(List<InlineButton> buttons, int maxNumberOfColumns) {
-        if (maxNumberOfColumns < 1)
+    public InlineKeyboardMarkup buildInline(int maxNumberOfColumns, List<InlineButton> buttons) {
+        if (maxNumberOfColumns < 1) {
             throw new TelegramCommonException("Количество колонок не может быть меньше одного.");
-        if (CollectionUtils.isEmpty(buttons))
+        }
+        if (Objects.isNull(buttons) || buttons.isEmpty()) {
             throw new TelegramCommonException("Должна присутствовать хотя бы одна кнопка");
+        }
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         List<InlineKeyboardButton> row = new ArrayList<>();
         int j = 0;
@@ -60,7 +55,9 @@ public class KeyboardBuilder {
                 j = 0;
             }
         }
-        return rows;
+        return InlineKeyboardMarkup.builder()
+                .keyboard(rows)
+                .build();
     }
 
     /**
@@ -148,7 +145,7 @@ public class KeyboardBuilder {
     public ReplyKeyboardMarkup buildReply(int maxNumberOfColumns, boolean oneTime, boolean resize, List<ReplyButton> buttons) {
         if (maxNumberOfColumns < 1)
             throw new TelegramCommonException("Количество колонок не может быть меньше 1.");
-        if (CollectionUtils.isEmpty(buttons))
+        if (Objects.isNull(buttons) || buttons.isEmpty())
             throw new TelegramCommonException("Должна присутствовать хотя бы одна кнопка.");
         List<KeyboardRow> rows = new ArrayList<>();
         KeyboardRow row = new KeyboardRow();
@@ -157,8 +154,8 @@ public class KeyboardBuilder {
             KeyboardButton keyboardButton = KeyboardButton.builder()
                     .text(buttons.get(i).getText())
                     .build();
-            if (buttons.get(i).isRequestContact()) keyboardButton.setRequestContact(true);
-            else if (buttons.get(i).isRequestLocation()) keyboardButton.setRequestLocation(true);
+            keyboardButton.setRequestContact(buttons.get(i).isRequestContact());
+            keyboardButton.setRequestLocation(buttons.get(i).isRequestLocation());
             row.add(keyboardButton);
             j++;
             if (j == maxNumberOfColumns || i == (buttons.size() - 1)) {

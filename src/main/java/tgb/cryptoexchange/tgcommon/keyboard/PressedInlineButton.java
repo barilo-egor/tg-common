@@ -3,11 +3,10 @@ package tgb.cryptoexchange.tgcommon.keyboard;
 import lombok.Data;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.MaybeInaccessibleMessage;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.cryptoexchange.tgcommon.exception.TelegramCommonException;
 
-import java.util.HashSet;
-import java.util.Objects;
+import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -57,12 +56,12 @@ public class PressedInlineButton {
      * @param index индекс (начиная с 1) аргумента
      * @return значение аргумента
      */
-    public String getArgument(int index) {
+    public Optional<String> getArgument(int index) {
         String[] split = data.split(InlineButton.CALLBACK_DATA_SPLITTER);
         if (split.length - 1 < index) {
-            return null;
+            return Optional.empty();
         }
-        return split[index];
+        return Optional.of(split[index]);
     }
 
     /**
@@ -70,13 +69,13 @@ public class PressedInlineButton {
      * @param index индекс (начиная с 1) аргумента
      * @return значение аргумента
      */
-    public Long getLongArgument(int index) {
-        String argument = getArgument(index);
-        if (argument == null) {
-            return null;
+    public Optional<Long> getLongArgument(int index) {
+        Optional<String> argument = getArgument(index);
+        if (argument.isEmpty()) {
+            return Optional.empty();
         }
         try {
-            return Long.parseLong(argument);
+            return Optional.of(Long.parseLong(argument.get()));
         } catch (NumberFormatException e) {
             throw new TelegramCommonException("Ошибка при парсинге к Long: data=%s, index=%s".formatted(data, index), e);
         }
@@ -87,13 +86,13 @@ public class PressedInlineButton {
      * @param index индекс (начиная с 1) аргумента
      * @return значение аргумента
      */
-    public Integer getIntArgument(int index) {
-        String argument = getArgument(index);
-        if (argument == null) {
-            return null;
+    public Optional<Integer> getIntArgument(int index) {
+        Optional<String> argument = getArgument(index);
+        if (argument.isEmpty()) {
+            return Optional.empty();
         }
         try {
-            return Integer.parseInt(argument);
+            return Optional.of(Integer.parseInt(argument.get()));
         } catch (NumberFormatException e) {
             throw new TelegramCommonException("Ошибка при парсинге к Integer: data=" + data + ", index=" + index, e);
         }
@@ -105,12 +104,16 @@ public class PressedInlineButton {
      */
     public Set<Integer> getIntArguments() {
         String[] split = data.split(InlineButton.CALLBACK_DATA_SPLITTER);
-        Set<Integer> result = new HashSet<>();
+        Set<Integer> result = new LinkedHashSet<>();
         if (split.length <= 1) {
             return result;
         }
         for (int i = 1; i < split.length; i++) {
-            result.add(Integer.parseInt(split[i]));
+            try {
+                result.add(Integer.parseInt(split[i]));
+            } catch (NumberFormatException e) {
+                throw new TelegramCommonException("Ошибка при парсинге к Integer: data=" + data + ", index=" + i, e);
+            }
         }
         return result;
     }
@@ -120,15 +123,16 @@ public class PressedInlineButton {
      * @param index индекс (начиная с 1) аргумента
      * @return значение аргумента
      */
-    public Boolean getBoolArgument(int index) {
-        String argument = getArgument(index);
-        if (argument == null) {
-            throw new NullPointerException("No boolean argument found");
+    public Optional<Boolean> getBoolArgument(int index) {
+        Optional<String> argument = getArgument(index);
+        if (argument.isEmpty()) {
+            return Optional.empty();
         }
-        if (Boolean.TRUE.toString().equalsIgnoreCase(argument)) {
-            return true;
-        } else if (Boolean.FALSE.toString().equalsIgnoreCase(argument)) {
-            return false;
+        String value = argument.get();
+        if (Boolean.TRUE.toString().equalsIgnoreCase(value)) {
+            return Optional.of(true);
+        } else if (Boolean.FALSE.toString().equalsIgnoreCase(value)) {
+            return Optional.of(false);
         }
         throw new TelegramCommonException("Ошибка при парсинге к Boolean: data=" + data + ", index=" + index);
     }
@@ -138,9 +142,6 @@ public class PressedInlineButton {
      * @return true если аргументы есть, false если нет
      */
     public boolean hasArguments() {
-        if (Objects.isNull(data)) {
-            return false;
-        }
         String[] split = data.split(InlineButton.CALLBACK_DATA_SPLITTER);
         return split.length > 1;
     }
