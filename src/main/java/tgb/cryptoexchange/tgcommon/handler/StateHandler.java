@@ -1,7 +1,6 @@
 package tgb.cryptoexchange.tgcommon.handler;
 
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.cryptoexchange.tgcommon.constants.UserState;
 
 /**
  * Обработчик состояний пользователя
@@ -18,5 +17,5 @@ public interface StateHandler {
      * Состояние, которое обрабатывает данный обработчик. Используется для определения обработчика для апдейта.
      * @return обрабатываемое состояние
      */
-    UserState getUserState();
+    String getUserState();
 }

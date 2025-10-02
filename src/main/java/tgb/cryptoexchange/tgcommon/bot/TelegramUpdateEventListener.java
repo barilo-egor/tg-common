@@ -9,7 +9,6 @@ import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMess
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.cryptoexchange.tgcommon.constants.UpdateType;
-import tgb.cryptoexchange.tgcommon.constants.UserState;
 import tgb.cryptoexchange.tgcommon.exception.HandlerTypeNotFoundException;
 import tgb.cryptoexchange.tgcommon.exception.TelegramCommonException;
 import tgb.cryptoexchange.tgcommon.handler.*;
@@ -34,7 +33,7 @@ public class TelegramUpdateEventListener {
 
     private final Map<UpdateType, UpdateHandler> updateHandlers;
 
-    private final Map<UserState, StateHandler> stateHandlerMap;
+    private final Map<String, StateHandler> stateHandlerMap;
 
     private final List<UpdateFilter> updateFilters;
 
@@ -77,9 +76,12 @@ public class TelegramUpdateEventListener {
         }
         this.stateHandlerMap = new HashMap<>();
         for (StateHandler stateHandler : stateHandlers) {
-            UserState userState = stateHandler.getUserState();
+            String userState = stateHandler.getUserState();
             if (Objects.isNull(userState)) {
                 throw new HandlerTypeNotFoundException("UserState null для " + stateHandler.getClass().getName());
+            }
+            if (stateHandlerMap.containsKey(userState)) {
+                throw new TelegramCommonException("StateHandler с таким UserState уже существует: " + userState);
             }
             stateHandlerMap.put(stateHandler.getUserState(), stateHandler);
         }
@@ -101,7 +103,7 @@ public class TelegramUpdateEventListener {
      * Если апдейт является спамом, то дальнейшная обработка апдейта прекращается.<br>
      * 3. Если апдейт не является спамом, то выполняется поиск подходящего фильтра.
      * Если найден подходящий фильтр, то обрабокта апдейта передается фильтру.<br>
-     * 4. Если фильтр не найден, то выполняется поиск обработчика состояния пользователя ({@link UserState}).
+     * 4. Если фильтр не найден, то выполняется поиск обработчика состояния пользователя.
      * Если в Redis было сохранено состояние за пользователем автором апдейта, то обработка передается обработчику данного состояния.<br>
      * 5. Если сохраненного за пользователем состояния не найдено, определяется тип данного апдейта ({@link UpdateType})
      * и выполняется поиск обработчика для данного типа, после чего найденному обработчику передается обработка апдейта.<br>
@@ -179,7 +181,7 @@ public class TelegramUpdateEventListener {
 
     private boolean handleState(Update update, UpdateType updateType, Long chatId) {
         if (UpdateType.STATE_UPDATE_TYPES.contains(updateType)) {
-            UserState userState = redisUserStateService.get(chatId);
+            String userState = redisUserStateService.get(chatId);
             if (Objects.nonNull(userState)) {
                 StateHandler stateHandler = stateHandlerMap.get(userState);
                 if (Objects.nonNull(stateHandler)) {

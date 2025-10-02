@@ -16,7 +16,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.payments.PreCheckoutQuery;
 import tgb.cryptoexchange.tgcommon.constants.UpdateType;
-import tgb.cryptoexchange.tgcommon.constants.UserState;
 import tgb.cryptoexchange.tgcommon.exception.HandlerTypeNotFoundException;
 import tgb.cryptoexchange.tgcommon.exception.TelegramCommonException;
 import tgb.cryptoexchange.tgcommon.handler.*;
@@ -127,7 +126,7 @@ class TelegramUpdateEventListenerTest {
         StateHandler updateHandlerWithNullUpdateType = Mockito.mock(StateHandler.class);
         when(updateHandlerWithNullUpdateType.getUserState()).thenReturn(null);
         StateHandler updateHandlerWithNonNullUpdateType = Mockito.mock(StateHandler.class);
-        when(updateHandlerWithNonNullUpdateType.getUserState()).thenReturn(() -> "someState");
+        when(updateHandlerWithNonNullUpdateType.getUserState()).thenReturn("someState");
         mockedStateHandlers.add(updateHandlerWithNonNullUpdateType);
         mockedStateHandlers.add(updateHandlerWithNullUpdateType);
 
@@ -227,8 +226,7 @@ class TelegramUpdateEventListenerTest {
         Update update = new Update();
         List<StateHandler> stateHandlers = new ArrayList<>();
         StateHandler mockedStateHandler = Mockito.mock(StateHandler.class);
-        UserState userState = () -> "someState";
-        when(mockedStateHandler.getUserState()).thenReturn(userState);
+        when(mockedStateHandler.getUserState()).thenReturn("someState");
         stateHandlers.add(mockedStateHandler);
 
         TelegramUpdateEventListener listener = new TelegramUpdateEventListener(
@@ -239,7 +237,7 @@ class TelegramUpdateEventListenerTest {
         when(bannedCache.get(chatId)).thenReturn(false);
         when(antiSpam.isSpam(chatId)).thenReturn(false);
 
-        when(redisUserStateService.get(chatId)).thenReturn(userState);
+        when(redisUserStateService.get(chatId)).thenReturn("someState");
         Message message = new Message();
         Chat chat = new Chat();
         chat.setId(chatId);
@@ -294,8 +292,7 @@ class TelegramUpdateEventListenerTest {
         when(bannedCache.get(chatId)).thenReturn(false);
         when(antiSpam.isSpam(chatId)).thenReturn(false);
 
-        UserState userState = () -> "SOME_STATE";
-        when(redisUserStateService.get(chatId)).thenReturn(userState);
+        when(redisUserStateService.get(chatId)).thenReturn("SOME_STATE");
         Message message = new Message();
         Chat chat = new Chat();
         chat.setId(chatId);
