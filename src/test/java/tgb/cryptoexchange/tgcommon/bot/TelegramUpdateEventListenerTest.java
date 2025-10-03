@@ -597,6 +597,6 @@ class TelegramUpdateEventListenerTest {
         NullPointerException exception = new NullPointerException();
         when(bannedCache.get(chatId)).thenThrow(exception);
         listener.update(event);
-        verify(expected).handle(exception);
+        verify(expected).handle(chatId, exception);
     }
 }

@@ -154,7 +154,7 @@ public class TelegramUpdateEventListener {
             }
         }
         if (Objects.nonNull(botExceptionHandler)) {
-            botExceptionHandler.handle(e);
+            botExceptionHandler.handle(chatId, e);
         } else {
             sendErrorResponse(e, chatId);
         }
