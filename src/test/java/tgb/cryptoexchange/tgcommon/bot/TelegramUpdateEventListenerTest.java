@@ -77,7 +77,8 @@ class TelegramUpdateEventListenerTest {
                         antiSpamProvider,
                         bannedCacheProvider,
                         responseSender,
-                        methodExecutor
+                        methodExecutor,
+                        new ArrayList<>()
                 );
         assertThrows(TelegramCommonException.class, constructorSupplier::get);
     }
@@ -90,7 +91,8 @@ class TelegramUpdateEventListenerTest {
         when(bannedCacheProvider.getIfAvailable()).thenReturn(null);
         Supplier<TelegramUpdateEventListener> constructorSupplier = () -> new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), new ArrayList<>(),
-                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor
+                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor,
+                new ArrayList<>()
         );
         assertThrows(TelegramCommonException.class, constructorSupplier::get);
     }
@@ -111,7 +113,8 @@ class TelegramUpdateEventListenerTest {
 
         Supplier<TelegramUpdateEventListener> constructorSupplier = () -> new TelegramUpdateEventListener(
                 redisUserStateService, mockedUpdateHandlers, new ArrayList<>(),
-                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor
+                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor,
+                new ArrayList<>()
         );
         assertThrows(HandlerTypeNotFoundException.class, constructorSupplier::get);
     }
@@ -132,9 +135,32 @@ class TelegramUpdateEventListenerTest {
 
         Supplier<TelegramUpdateEventListener> constructorSupplier = () -> new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), mockedStateHandlers,
-                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor
+                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor,
+                new ArrayList<>()
         );
         assertThrows(HandlerTypeNotFoundException.class, constructorSupplier::get);
+    }
+
+    @Test
+    @DisplayName("new TelegramUpdateEventListener - один из userState == null - проброшен HandlerTypeNotFoundException")
+    void shouldThrowTelegramCommonExceptionIfFewHandlersWithSameState() {
+        when(antiSpamProvider.getIfAvailable()).thenReturn(antiSpam);
+        when(bannedCacheProvider.getIfAvailable()).thenReturn(bannedCache);
+
+        List<StateHandler> mockedStateHandlers = new ArrayList<>();
+        StateHandler updateHandlerWithNullUpdateType = Mockito.mock(StateHandler.class);
+        when(updateHandlerWithNullUpdateType.getUserState()).thenReturn("someState");
+        StateHandler updateHandlerWithNonNullUpdateType = Mockito.mock(StateHandler.class);
+        when(updateHandlerWithNonNullUpdateType.getUserState()).thenReturn("someState");
+        mockedStateHandlers.add(updateHandlerWithNonNullUpdateType);
+        mockedStateHandlers.add(updateHandlerWithNullUpdateType);
+
+        Supplier<TelegramUpdateEventListener> constructorSupplier = () -> new TelegramUpdateEventListener(
+                redisUserStateService, new ArrayList<>(), mockedStateHandlers,
+                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor,
+                new ArrayList<>()
+        );
+        assertThrows(TelegramCommonException.class, constructorSupplier::get);
     }
 
     @Test
@@ -144,7 +170,8 @@ class TelegramUpdateEventListenerTest {
         when(antiSpamProvider.getIfAvailable()).thenReturn(antiSpam);
         TelegramUpdateEventListener listener = new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), new ArrayList<>(),
-                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor
+                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor,
+                new ArrayList<>()
         );
         Long chatId = 123456789L;
         when(bannedCache.get(chatId)).thenReturn(true);
@@ -167,7 +194,8 @@ class TelegramUpdateEventListenerTest {
         when(antiSpamProvider.getIfAvailable()).thenReturn(antiSpam);
         TelegramUpdateEventListener listener = new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), new ArrayList<>(),
-                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor
+                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor,
+                new ArrayList<>()
         );
         Long chatId = 123456789L;
         when(bannedCache.get(chatId)).thenReturn(false);
@@ -200,7 +228,8 @@ class TelegramUpdateEventListenerTest {
 
         TelegramUpdateEventListener listener = new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), new ArrayList<>(),
-                emptyHandler, updateFilters, antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor
+                emptyHandler, updateFilters, antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor,
+                new ArrayList<>()
         );
         Long chatId = 123456789L;
         when(bannedCache.get(chatId)).thenReturn(false);
@@ -231,7 +260,8 @@ class TelegramUpdateEventListenerTest {
 
         TelegramUpdateEventListener listener = new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), stateHandlers,
-                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor
+                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor,
+                new ArrayList<>()
         );
         Long chatId = 123456789L;
         when(bannedCache.get(chatId)).thenReturn(false);
@@ -258,7 +288,8 @@ class TelegramUpdateEventListenerTest {
 
         TelegramUpdateEventListener listener = new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), new ArrayList<>(),
-                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor
+                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor,
+                new ArrayList<>()
         );
         Long chatId = 123456789L;
         when(bannedCache.get(chatId)).thenReturn(false);
@@ -286,7 +317,8 @@ class TelegramUpdateEventListenerTest {
 
         TelegramUpdateEventListener listener = new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), new ArrayList<>(),
-                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor
+                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor,
+                new ArrayList<>()
         );
         Long chatId = 123456789L;
         when(bannedCache.get(chatId)).thenReturn(false);
@@ -314,7 +346,8 @@ class TelegramUpdateEventListenerTest {
 
         TelegramUpdateEventListener listener = new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), new ArrayList<>(),
-                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor
+                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor,
+                new ArrayList<>()
         );
         Long chatId = 123456789L;
         when(bannedCache.get(chatId)).thenReturn(false);
@@ -349,7 +382,8 @@ class TelegramUpdateEventListenerTest {
 
         TelegramUpdateEventListener listener = new TelegramUpdateEventListener(
                 redisUserStateService, updateHandlers, new ArrayList<>(),
-                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor
+                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor,
+                new ArrayList<>()
         );
         Long chatId = 123456789L;
         when(bannedCache.get(chatId)).thenReturn(false);
@@ -372,7 +406,8 @@ class TelegramUpdateEventListenerTest {
         when(antiSpamProvider.getIfAvailable()).thenReturn(antiSpam);
         TelegramUpdateEventListener listener = new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), new ArrayList<>(),
-                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor
+                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor,
+                new ArrayList<>()
         );
 
         Update update = new Update();
@@ -390,7 +425,7 @@ class TelegramUpdateEventListenerTest {
         when(messageTypeResolver.message(anyString())).thenReturn(textMessage);
         listener.update(event);
         ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
-        verify(responseSender).to(eq(chatId));
+        verify(responseSender).to(chatId);
         verify(messageTypeResolver).message(messageCaptor.capture());
         verify(textMessage).send();
         String value = messageCaptor.getValue();
@@ -410,7 +445,8 @@ class TelegramUpdateEventListenerTest {
 
         TelegramUpdateEventListener listener = new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), new ArrayList<>(),
-                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor
+                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor,
+                new ArrayList<>()
         );
         Long chatId = 123456789L;
         when(bannedCache.get(chatId)).thenReturn(false);
@@ -437,7 +473,8 @@ class TelegramUpdateEventListenerTest {
 
         TelegramUpdateEventListener listener = new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), new ArrayList<>(),
-                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor
+                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor,
+                new ArrayList<>()
         );
         long chatId = 123456789L;
         Update update = new Update();
@@ -458,7 +495,8 @@ class TelegramUpdateEventListenerTest {
 
         TelegramUpdateEventListener listener = new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), new ArrayList<>(),
-                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor
+                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor,
+                new ArrayList<>()
         );
         long chatId = 123456789L;
         Update update = new Update();
@@ -480,7 +518,8 @@ class TelegramUpdateEventListenerTest {
 
         TelegramUpdateEventListener listener = new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), new ArrayList<>(),
-                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor
+                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor,
+                new ArrayList<>()
         );
         long chatId = 123456789L;
         Update update = new Update();
@@ -529,5 +568,35 @@ class TelegramUpdateEventListenerTest {
         }
     }
 
+    @Test
+    @DisplayName("update(TelegramUpdateEvent event) - наличие обработчиков исключений - обработка исключения передана обработчику")
+    void updateShouldHandledByBotExceptionHandler() {
+        when(bannedCacheProvider.getIfAvailable()).thenReturn(bannedCache);
+        when(antiSpamProvider.getIfAvailable()).thenReturn(antiSpam);
+        List<BotExceptionHandler> botExceptionHandlers = new ArrayList<>();
+        BotExceptionHandler expected = mock(BotExceptionHandler.class);
+        when(expected.isInstance(any())).thenReturn(true);
+        botExceptionHandlers.add(expected);
+        BotExceptionHandler someHandler = mock(BotExceptionHandler.class);
+        when(someHandler.isInstance(any())).thenReturn(false);
+        botExceptionHandlers.add(someHandler);
+        TelegramUpdateEventListener listener = new TelegramUpdateEventListener(
+                redisUserStateService, new ArrayList<>(), new ArrayList<>(),
+                emptyHandler, new ArrayList<>(), antiSpamProvider, bannedCacheProvider, responseSender, methodExecutor,
+                botExceptionHandlers
+        );
 
+        Update update = new Update();
+        Long chatId = 123456789L;
+        Message message = new Message();
+        Chat chat = new Chat();
+        chat.setId(chatId);
+        message.setChat(chat);
+        update.setMessage(message);
+        TelegramUpdateEvent event = new TelegramUpdateEvent(new Object(), update);
+        NullPointerException exception = new NullPointerException();
+        when(bannedCache.get(chatId)).thenThrow(exception);
+        listener.update(event);
+        verify(expected).handle(exception);
+    }
 }

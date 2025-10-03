@@ -47,15 +47,18 @@ public class TelegramUpdateEventListener {
 
     private final MethodExecutor methodExecutor;
 
+    private final List<BotExceptionHandler> exceptionHandlers;
+
     public TelegramUpdateEventListener(RedisUserStateService redisUserStateService, List<UpdateHandler> updateHandlers,
                                        List<StateHandler> stateHandlers, EmptyHandler emptyHandler,
                                        List<UpdateFilter> updateFilters, ObjectProvider<AntiSpam> antiSpam,
                                        ObjectProvider<BannedCache> bannedCache, ResponseSender responseSender,
-                                       MethodExecutor methodExecutor) {
+                                       MethodExecutor methodExecutor, List<BotExceptionHandler> exceptionHandlers) {
         this.redisUserStateService = redisUserStateService;
         this.emptyHandler = emptyHandler;
         this.antiSpam = antiSpam.getIfAvailable();
         this.methodExecutor = methodExecutor;
+        this.exceptionHandlers = exceptionHandlers;
         if (Objects.isNull(this.antiSpam)) {
             throw new TelegramCommonException("Отсутствует реализация интерфейса AntiSpam");
         }
@@ -135,11 +138,25 @@ public class TelegramUpdateEventListener {
                 }
             }
         } catch (Exception e) {
-            sendErrorResponse(e, chatId);
+            handleException(chatId, e);
         } finally {
             if (lockAcquired) {
                 lock.unlock();
             }
+        }
+    }
+
+    private void handleException(Long chatId, Exception e) {
+        BotExceptionHandler botExceptionHandler = null;
+        for (BotExceptionHandler handler : exceptionHandlers) {
+            if (handler.isInstance(e)) {
+                botExceptionHandler = handler;
+            }
+        }
+        if (Objects.nonNull(botExceptionHandler)) {
+            botExceptionHandler.handle(e);
+        } else {
+            sendErrorResponse(e, chatId);
         }
     }
 
