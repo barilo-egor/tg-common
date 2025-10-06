@@ -50,8 +50,8 @@ public class MessageTypeResolver {
         return new EditMessageReplyKeyboard(methodExecutor, chatId, messageId, replyKeyboard);
     }
 
-    public DeleteMessage delete(Integer messageId) {
-        return new DeleteMessage(methodExecutor, chatId, messageId);
+    public void delete(Integer messageId) {
+        new DeleteMessage(methodExecutor, chatId, messageId);
     }
 
     public Action action() {

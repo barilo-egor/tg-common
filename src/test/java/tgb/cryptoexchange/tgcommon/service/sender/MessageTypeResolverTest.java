@@ -180,8 +180,7 @@ class MessageTypeResolverTest {
             "63463454"
     })
     void deleteShouldCreateWithPassedMessageId(Integer messageId) {
-        DeleteMessage deleteMessage = messageTypeResolver.delete(messageId);
-        deleteMessage.delete();
+        messageTypeResolver.delete(messageId);
         ArgumentCaptor<org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage> deleteMessageArgumentCaptor =
                 ArgumentCaptor.forClass(org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage.class);
         verify(methodExecutor).execute(deleteMessageArgumentCaptor.capture());
