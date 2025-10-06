@@ -1,6 +1,7 @@
 package tgb.cryptoexchange.tgcommon.service.sender;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -23,6 +24,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -186,5 +188,12 @@ class MessageTypeResolverTest {
         assertAll(
                 () -> assertEquals(messageId, deleteMessageArgumentCaptor.getValue().getMessageId())
         );
+    }
+
+    @Test
+    void actionTest() {
+        Action deleteMessage = messageTypeResolver.action();
+        deleteMessage.typing();
+        verify(methodExecutor).execute(any(SendChatAction.class));
     }
 }

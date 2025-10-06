@@ -53,4 +53,8 @@ public class MessageTypeResolver {
     public DeleteMessage delete(Integer messageId) {
         return new DeleteMessage(methodExecutor, chatId, messageId);
     }
+
+    public Action action() {
+        return new Action(methodExecutor, chatId);
+    }
 }
