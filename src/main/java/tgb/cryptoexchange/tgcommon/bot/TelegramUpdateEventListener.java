@@ -5,7 +5,6 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.cryptoexchange.tgcommon.constants.UpdateType;
@@ -45,19 +44,16 @@ public class TelegramUpdateEventListener {
 
     private final ResponseSender responseSender;
 
-    private final MethodExecutor methodExecutor;
-
     private final List<BotExceptionHandler> exceptionHandlers;
 
     public TelegramUpdateEventListener(RedisUserStateService redisUserStateService, List<UpdateHandler> updateHandlers,
                                        List<StateHandler> stateHandlers, EmptyHandler emptyHandler,
                                        List<UpdateFilter> updateFilters, ObjectProvider<AntiSpam> antiSpam,
                                        ObjectProvider<BannedCache> bannedCache, ResponseSender responseSender,
-                                       MethodExecutor methodExecutor, List<BotExceptionHandler> exceptionHandlers) {
+                                       List<BotExceptionHandler> exceptionHandlers) {
         this.redisUserStateService = redisUserStateService;
         this.emptyHandler = emptyHandler;
         this.antiSpam = antiSpam.getIfAvailable();
-        this.methodExecutor = methodExecutor;
         this.exceptionHandlers = exceptionHandlers;
         if (Objects.isNull(this.antiSpam)) {
             throw new TelegramCommonException("Отсутствует реализация интерфейса AntiSpam");
@@ -110,8 +106,7 @@ public class TelegramUpdateEventListener {
      * Если в Redis было сохранено состояние за пользователем автором апдейта, то обработка передается обработчику данного состояния.<br>
      * 5. Если сохраненного за пользователем состояния не найдено, определяется тип данного апдейта ({@link UpdateType})
      * и выполняется поиск обработчика для данного типа, после чего найденному обработчику передается обработка апдейта.<br>
-     * 6. Если обработчик найден не был, получается объект сообщения из реализации
-     * {@link EmptyHandler#getEmptyMessage(Long)} и выполняется его отправка.
+     * 6. Если обработчик найден не был, обработка выполняется через бин {@link EmptyHandler#handle(Long)}
      *
      * @param event ивент с телеграм-апдейтом
      */
@@ -163,10 +158,7 @@ public class TelegramUpdateEventListener {
     private void sendNoHandler(Update update) {
         Chat chat = UpdateType.getChat(update);
         if (Objects.nonNull(chat) && Boolean.TRUE.equals(chat.isUserChat())) {
-            BotApiMethodMessage message = emptyHandler.getEmptyMessage(UpdateType.getChatId(update));
-            if (Objects.nonNull(message)) {
-                methodExecutor.execute(message);
-            }
+            emptyHandler.handle(UpdateType.getChatId(update));
         }
     }
 
