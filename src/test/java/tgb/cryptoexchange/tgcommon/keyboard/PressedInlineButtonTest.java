@@ -298,7 +298,8 @@ class PressedInlineButtonTest {
         callbackQuery.setData(data);
         callbackQuery.setMessage(message);
 
-        assertThrows(TelegramCommonException.class, () -> PressedInlineButton.build(callbackQuery).getIntArguments());
+        PressedInlineButton button = PressedInlineButton.build(callbackQuery);
+        assertThrows(TelegramCommonException.class, button::getIntArguments);
     }
 
 

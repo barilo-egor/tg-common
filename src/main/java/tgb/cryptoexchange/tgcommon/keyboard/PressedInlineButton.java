@@ -14,6 +14,8 @@ import java.util.Set;
  */
 @Data
 public class PressedInlineButton {
+    
+    private static final String INDEX = ", index=";
 
     /**
      * Идентификатор {@link CallbackQuery}
@@ -97,7 +99,7 @@ public class PressedInlineButton {
         try {
             return Optional.of(Integer.parseInt(argument.get()));
         } catch (NumberFormatException e) {
-            throw new TelegramCommonException("Ошибка при парсинге к Integer: data=" + data + ", index=" + index, e);
+            throw new TelegramCommonException("Ошибка при парсинге к Integer: data=" + data + INDEX + index, e);
         }
     }
 
@@ -115,7 +117,7 @@ public class PressedInlineButton {
             try {
                 result.add(Integer.parseInt(split[i]));
             } catch (NumberFormatException e) {
-                throw new TelegramCommonException("Ошибка при парсинге к Integer: data=" + data + ", index=" + i, e);
+                throw new TelegramCommonException("Ошибка при парсинге к Integer: data=" + data + INDEX + i, e);
             }
         }
         return result;
@@ -137,7 +139,7 @@ public class PressedInlineButton {
         } else if (Boolean.FALSE.toString().equalsIgnoreCase(value)) {
             return Optional.of(false);
         }
-        throw new TelegramCommonException("Ошибка при парсинге к Boolean: data=" + data + ", index=" + index);
+        throw new TelegramCommonException("Ошибка при парсинге к Boolean: data=" + data + INDEX + index);
     }
 
     /**

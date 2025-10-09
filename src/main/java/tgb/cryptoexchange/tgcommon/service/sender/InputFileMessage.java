@@ -24,7 +24,7 @@ public abstract class InputFileMessage<T> {
 
     protected ParseMode parseMode;
 
-    public InputFileMessage(MethodExecutor methodExecutor, Long chatId, InputFile inputFile) {
+    InputFileMessage(MethodExecutor methodExecutor, Long chatId, InputFile inputFile) {
         this.methodExecutor = methodExecutor;
         this.chatId = chatId;
         this.inputFile = inputFile;

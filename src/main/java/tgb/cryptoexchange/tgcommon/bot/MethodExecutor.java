@@ -15,6 +15,8 @@ import java.util.Optional;
 @Slf4j
 public class MethodExecutor {
 
+    private static final String SEND_ERROR = "Ошибка при отправке {} :";
+    
     private final BotInstance bot;
 
     public MethodExecutor(BotInstance bot) {
@@ -39,7 +41,7 @@ public class MethodExecutor {
                 default -> throw new UnsupportedOperationException("Unexpected value: " + sendMediaBotMethod.getClass());
             }
         } catch (TelegramApiException e) {
-            log.error("Ошибка при отправке {} :", sendMediaBotMethod, e);
+            log.error(SEND_ERROR, sendMediaBotMethod, e);
             return Optional.empty();
         }
     }
@@ -48,7 +50,7 @@ public class MethodExecutor {
         try {
             bot.execute(botApiMethodBoolean);
         } catch (TelegramApiException e) {
-            log.error("Ошибка при отправке {} :", botApiMethodBoolean.toString(), e);
+            log.error(SEND_ERROR, botApiMethodBoolean.toString(), e);
         }
     }
 
@@ -56,7 +58,7 @@ public class MethodExecutor {
         try {
             bot.execute(botApiMethodSerializable);
         } catch (TelegramApiException e) {
-            log.error("Ошибка при отправке {} :", botApiMethodSerializable.toString(), e);
+            log.error(SEND_ERROR, botApiMethodSerializable.toString(), e);
         }
     }
 
@@ -64,7 +66,7 @@ public class MethodExecutor {
         try {
             bot.execute(sendMediaGroup);
         } catch (TelegramApiException e) {
-            log.error("Ошибка при отправке {} :", sendMediaGroup.toString(), e);
+            log.error(SEND_ERROR, sendMediaGroup.toString(), e);
         }
     }
 
